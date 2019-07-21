@@ -21,7 +21,7 @@ Define the CSS color `rebeccapurple` using various methods:
     $color2css = new color2css(102, 51, 153, 1.0);
     $color2css = new color2css(270, 0.5, 0.4, 1.0);
 
-Interpret a CSS color description:
+Interpret a CSS color definition:
 
     $color2css->rgb("rgb(102, 51, 153)");    // returns true
     $color2css->rgb("rgb(256, 257, 258)");   // returns false
