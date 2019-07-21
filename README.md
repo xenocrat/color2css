@@ -8,7 +8,7 @@ color2css is a PHP class for handling CSS color conversions.
 
 ## Usage
 
-Define the color `rebeccapurple` using various methods:
+Define the CSS color `rebeccapurple` using various methods:
 
     $color2css = new color2css("rebeccapurple");
     $color2css = new color2css("#663399");
@@ -49,5 +49,6 @@ Export a CSS color definition:
     $color2css->hex();
     $color2css->rgb();
     $color2css->hsl();
+    $color2css->hexa();
     $color2css->rgba();
     $color2css->hsla();
