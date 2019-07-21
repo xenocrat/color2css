@@ -30,25 +30,25 @@ Interpret a CSS color definition:
 
 Adjust the RGB values of a color:
 
-    $color2css->r(255);
-    $color2css->g(99);
-    $color2css->b(71);
+    $color2css->red(255);
+    $color2css->green(99);
+    $color2css->blue(71);
 
 Adjust the HSL values of a color:
 
-    $color2css->h(9);
-    $color2css->s(1.0);
-    $color2css->l(0.64);
+    $color2css->hue(9);
+    $color2css->saturation(1.0);
+    $color2css->lightness(0.64);
 
 Adjust the alpha value of a color:
 
-    $color2css->a(0.5);
+    $color2css->alpha(0.5);
 
 Export a CSS color definition:
 
-    $color2css->hex();
-    $color2css->rgb();
-    $color2css->hsl();
-    $color2css->hexa();
-    $color2css->rgba();
-    $color2css->hsla();
+    $color2css->hex();  // returns "#ff6347"
+    $color2css->rgb();  // returns "rgb(255, 99, 71)"
+    $color2css->hsl();  // returns "hsl(9, 100%, 64%)"
+    $color2css->hexa(); // returns "#ff6347128"
+    $color2css->rgba(); // returns "rgba(255, 99, 71, 0.50)"
+    $color2css->hsla(); // returns "hsla(9, 100%, 64%, 0.50)"
