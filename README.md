@@ -49,6 +49,6 @@ Export a CSS color definition:
     $color2css->hex();  // returns "#ff6347"
     $color2css->rgb();  // returns "rgb(255, 99, 71)"
     $color2css->hsl();  // returns "hsl(9, 100%, 64%)"
-    $color2css->hexa(); // returns "#ff6347128"
+    $color2css->hexa(); // returns "#ff634780"
     $color2css->rgba(); // returns "rgba(255, 99, 71, 0.50)"
     $color2css->hsla(); // returns "hsla(9, 100%, 64%, 0.50)"
