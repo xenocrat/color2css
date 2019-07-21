@@ -364,7 +364,7 @@
             $c = $max - $min;
 
             $l = ($max + $min) / 2;
-            $s = ($l == 0 or $l == 1) ? 0 : $c / (1 - ((2 * $l) - 1)) ;
+            $s = ($l == 0 or $l == 1) ? 0 : $c / (1 - abs((2 * $l) - 1)) ;
 
             switch ($max) {
                 case $r:
