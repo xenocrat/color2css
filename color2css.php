@@ -226,7 +226,8 @@
             $r = str_pad(dechex($this->r), 2, "0", STR_PAD_LEFT);
             $g = str_pad(dechex($this->g), 2, "0", STR_PAD_LEFT);
             $b = str_pad(dechex($this->b), 2, "0", STR_PAD_LEFT);
-            $a = str_pad((int) round($this->a * 255), 2, "0", STR_PAD_LEFT);
+            $a = (int) round($this->a * 255);
+            $a = str_pad(dechex($a), 2, "0", STR_PAD_LEFT);
 
             return "#".$r.$g.$b.$a;
         }
