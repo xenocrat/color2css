@@ -168,7 +168,7 @@
                 return $this->interpret($color);
 
             if (count($args) < 3)
-                throw new Exception("Missing arguments in call to color constrcutor.");
+                throw new Exception("Missing arguments in call to color constructor.");
 
             if (is_float($args[1])) {
                 $this->hue($args[0]);
