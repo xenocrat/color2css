@@ -429,21 +429,22 @@
 
         private function interpret($color) {
             if (!is_string($color))
-                return false;
+                throw new Exception("Expected string in call to color constructor.");
 
-            if (preg_match("/^rgba?\(/", $color))
-                return $this->interpret_rgb($color);
+            if (!isset($success) and preg_match("/^rgba?\(/", $color))
+                $success = $this->interpret_rgb($color);
 
-            if (preg_match("/^hsla?\(/", $color))
-                return $this->interpret_hsl($color);
+            if (!isset($success) and preg_match("/^hsla?\(/", $color))
+                $success = $this->interpret_hsl($color);
 
-            if (preg_match("/^#[0-9a-f]{3,8}/", $color))
-                return $this->interpret_hex($color);
+            if (!isset($success) and preg_match("/^#[0-9a-f]{3,8}/", $color))
+                $success = $this->interpret_hex($color);
 
-            if (preg_match("/^[a-z]+/i", $color))
-                return $this->interpret_keyword($color);
+            if (!isset($success) and preg_match("/^[a-z]+/i", $color))
+                $success = $this->interpret_keyword($color);
 
-            return false;
+            if (!isset($success) or !$success)
+                throw new Exception("Invalid string supplied to color constructor.");
         }
 
         private function interpret_rgb($str) {
