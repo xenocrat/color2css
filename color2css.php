@@ -513,7 +513,7 @@
             if ($h < 0 or $s < 0 or $l < 0 or $a < 0)
                 return false;
 
-            if ($h > 360 or $s > 1 or $l > 1 or $a > 1)
+            if ($s > 1 or $l > 1 or $a > 1)
                 return false;
 
             $this->hue($h);
