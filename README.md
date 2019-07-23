@@ -23,8 +23,6 @@ Define the CSS color `rebeccapurple` using various methods:
 
 Interpret a CSS color definition:
 
-    $color2css = new color2css("tomato");    // returns true
-    $color2css = new color2css("foobar");    // returns false
     $color2css->hex("#663399");              // returns true
     $color2css->hex("#6633GG");              // returns false
     $color2css->rgb("rgb(102, 51, 153)");    // returns true
