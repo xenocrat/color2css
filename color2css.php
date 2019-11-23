@@ -580,7 +580,7 @@
             $this->blue($b);
             $this->alpha($a);
 
-            return true;    
+            return true;
         }
 
         private function interpret_keyword($str) {
