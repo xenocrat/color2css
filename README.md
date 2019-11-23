@@ -29,6 +29,8 @@ Interpret a CSS color definition:
     $color2css->rgb("rgb(256, 257, 258)");   // returns false
     $color2css->hsl("hsl(270, 50%, 40%)");   // returns true
     $color2css->hsl("hsl(270, 200%, 300%)"); // returns false
+    $color2css->keyword("rebeccapurple");    // returns true
+    $color2css->keyword("foobar");           // returns false
 
 Adjust the RGB values of a color:
 
@@ -48,9 +50,9 @@ Adjust the alpha value of a color:
 
 Export a CSS color definition:
 
-    $color2css->hex();  // returns "#ff6347"
-    $color2css->rgb();  // returns "rgb(255, 99, 71)"
-    $color2css->hsl();  // returns "hsl(9, 100%, 64%)"
-    $color2css->hexa(); // returns "#ff634780"
-    $color2css->rgba(); // returns "rgba(255, 99, 71, 0.50)"
-    $color2css->hsla(); // returns "hsla(9, 100%, 64%, 0.50)"
+    $color2css->hex();     // returns "#ff6347"
+    $color2css->rgb();     // returns "rgb(255, 99, 71)"
+    $color2css->hsl();     // returns "hsl(9, 100%, 64%)"
+    $color2css->hexa();    // returns "#ff634780"
+    $color2css->rgba();    // returns "rgba(255, 99, 71, 0.50)"
+    $color2css->hsla();    // returns "hsla(9, 100%, 64%, 0.50)"
