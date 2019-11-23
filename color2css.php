@@ -354,6 +354,28 @@
             return true;
         }
 
+        public function keyword($str = null) {
+            if (isset($str))
+                return $this->interpret_keyword($str);
+
+            $reflect = new ReflectionClass(get_class($this));
+            $constants = $reflect->getConstants();
+
+            $colors = array();
+
+            foreach ($constants as $key => $val) {
+                if (preg_match("/^CSS_COLOR_/", $key))
+                    $colors[strtolower(substr($key, 10))] = $val;
+            }
+
+            foreach ($colors as $name => $hexa) {
+                if ($hexa == $this->hexa())
+                    return $name;
+            }
+
+            return false;
+        }
+
         private function rgb2hsl() {
             $r = $this->r / 255;
             $g = $this->g / 255;
