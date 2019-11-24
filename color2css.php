@@ -368,8 +368,10 @@
                     $colors[strtolower(substr($key, 10))] = $val;
             }
 
-            foreach ($colors as $name => $hexa) {
-                if ($hexa == $this->hexa())
+            $hexa = $this->hexa();
+
+            foreach ($colors as $name => $val) {
+                if ($hexa == $val)
                     return $name;
             }
 
