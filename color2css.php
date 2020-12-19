@@ -496,7 +496,7 @@
                         $b = (int) (strpos($val, "%") ? (int) $val * 2.55 : $val);
                         break;
                     case 4:
-                        $a = (float) (strpos($val, "%") ? (int) $val / 100 :  $val);
+                        $a = (float) (strpos($val, "%") ? (int) $val / 100 : $val);
                         break;
                 }
             }
