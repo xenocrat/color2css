@@ -159,7 +159,7 @@
         private $h                           = 0;
         private $s                           = 0.0;
         private $l                           = 0.0;
-        private $a                           = 1.0;
+        private $a                           = 0.0;
 
         public function __construct($color = "transparent") {
             $args = func_get_args();
@@ -455,27 +455,32 @@
             if (!is_string($color))
                 throw new Exception("Expected string in call to color constructor.");
 
-            if (!isset($success) and preg_match("/^rgba?\(/", $color))
-                $success = $this->interpret_rgb($color);
+            if (preg_match("/^rgba?\(/", $color))
+                if ($this->interpret_rgb($color))
+                    return;
 
-            if (!isset($success) and preg_match("/^hsla?\(/", $color))
-                $success = $this->interpret_hsl($color);
+            if (preg_match("/^hsla?\(/", $color))
+                if ($this->interpret_hsl($color))
+                    return;
 
-            if (!isset($success) and preg_match("/^#[0-9a-f]{3,8}/", $color))
-                $success = $this->interpret_hex($color);
+            if (preg_match("/^#[0-9a-f]{3,8}/", $color))
+                if ($this->interpret_hex($color))
+                    return;
 
-            if (!isset($success) and preg_match("/^[a-z]+/i", $color))
-                $success = $this->interpret_keyword($color);
+            if (preg_match("/^[a-z]+/i", $color))
+                if ($this->interpret_keyword($color))
+                    return;
 
-            if (!isset($success) or !$success)
-                throw new Exception("Invalid string supplied to color constructor.");
+            throw new Exception("Invalid string supplied to color constructor.");
         }
 
         private function interpret_rgb($str) {
-            if (!preg_match("/^rgba?\(([0-9]+%?)[, ]+([0-9]+%?)[, ]+([0-9]+%?)([, \/]+[\.0-9]+%?)?\)/", $str, $rgb))
+            $regex = "/^rgba?\(([0-9]+%?)[, ]+([0-9]+%?)[, ]+([0-9]+%?)([, \/]+[\.0-9]+%?)?\)/";
+
+            if (!preg_match($regex, $str, $rgb))
                 return false;
 
-            $a = $this->a;
+            $a = 1.0;
 
             for ($i = 1; $i < count($rgb) ; $i++) { 
                 $val = trim($rgb[$i], ", /");
@@ -511,10 +516,12 @@
         }
 
         private function interpret_hsl($str) {
-            if (!preg_match("/^hsla?\(([0-9]+)[, ]+([0-9]+%)[, ]+([0-9]+%)([, \/]+[\.0-9]+%?)?\)/", $str, $hsl))
+            $regex = "/^hsla?\(([0-9]+)[, ]+([0-9]+%)[, ]+([0-9]+%)([, \/]+[\.0-9]+%?)?\)/";
+
+            if (!preg_match($regex, $str, $hsl))
                 return false;
 
-            $a = $this->a;
+            $a = 1.0;
 
             for ($i = 1; $i < count($hsl) ; $i++) { 
                 $val = trim($hsl[$i], ", /");
@@ -550,26 +557,27 @@
         }
 
         private function interpret_hex($str) {
+            $regex_45 = "/^#([0-9a-f])([0-9a-f])([0-9a-f])([0-9a-f])?/i";
+            $regex_79 = "/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})?/i";
+
             switch (strlen($str)) {
                 case 4:
                 case 5:
-                    if (!preg_match("/^#([0-9a-f])([0-9a-f])([0-9a-f])([0-9a-f])?/i", $str, $hex))
+                    if (!preg_match($regex_45, $str, $hex))
                         return false;
-
-                    break;
-
+                    else
+                        break;
                 case 7:
                 case 9:
-                    if (!preg_match("/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})?/i", $str, $hex))
+                    if (!preg_match($regex_79, $str, $hex))
                         return false;
-
-                    break;
-
+                    else
+                        break;
                 default:
                     return false;
             }
 
-            $a = $this->a;
+            $a = 1.0;
 
             for ($i = 1; $i < count($hex) ; $i++) { 
                 if (strlen($hex[$i]) < 2)
