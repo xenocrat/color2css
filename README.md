@@ -10,16 +10,16 @@ color2css is a PHP class for handling CSS color conversions.
 
 Define the CSS color `rebeccapurple` using various methods:
 
-    $color2css = new color2css("rebeccapurple");
-    $color2css = new color2css("#663399");
-    $color2css = new color2css("rgb(102, 51, 153)");
-    $color2css = new color2css("hsl(270, 50%, 40%)");
-    $color2css = new color2css("rgba(102, 51, 153, 1.0)");
-    $color2css = new color2css("hsla(270, 50%, 40%, 100%)");
-    $color2css = new color2css(102, 51, 153);
-    $color2css = new color2css(270, 0.5, 0.4);
-    $color2css = new color2css(102, 51, 153, 1.0);
-    $color2css = new color2css(270, 0.5, 0.4, 1.0);
+    $color2css = new \xenocrat\color2css("rebeccapurple");
+    $color2css = new \xenocrat\color2css("#663399");
+    $color2css = new \xenocrat\color2css("rgb(102, 51, 153)");
+    $color2css = new \xenocrat\color2css("hsl(270, 50%, 40%)");
+    $color2css = new \xenocrat\color2css("rgba(102, 51, 153, 1.0)");
+    $color2css = new \xenocrat\color2css("hsla(270, 50%, 40%, 100%)");
+    $color2css = new \xenocrat\color2css(102, 51, 153);
+    $color2css = new \xenocrat\color2css(270, 0.5, 0.4);
+    $color2css = new \xenocrat\color2css(102, 51, 153, 1.0);
+    $color2css = new \xenocrat\color2css(270, 0.5, 0.4, 1.0);
 
 Interpret a CSS color definition:
 
