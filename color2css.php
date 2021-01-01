@@ -1,7 +1,9 @@
 <?php
+    namespace xenocrat;
+
     class color2css {
-        const COLOR2CSS_VERSION_MAJOR        = 1;
-        const COLOR2CSS_VERSION_MINOR        = 2;
+        const COLOR2CSS_VERSION_MAJOR        = 2;
+        const COLOR2CSS_VERSION_MINOR        = 0;
 
         const CSS_COLOR_TRANSPARENT          = "#00000000";
         const CSS_COLOR_BLACK                = "#000000ff";
@@ -168,7 +170,7 @@
                 return $this->interpret($color);
 
             if (count($args) < 3)
-                throw new Exception("Missing arguments in call to color constructor.");
+                throw new \Exception("Missing arguments in call to color constructor.");
 
             if (is_float($args[1])) {
                 $this->hue($args[0]);
@@ -263,7 +265,7 @@
                 return $this->r;
 
             if (!is_int($r) or $r < 0 or $r > 255)
-                throw new Exception("Red value must be an integer in the range 0-255.");
+                throw new \Exception("Red value must be an integer in the range 0-255.");
 
             $this->r = $r;
             $this->rgb2hsl();
@@ -276,7 +278,7 @@
                 return $this->g;
 
             if (!is_int($g) or $g < 0 or $g > 255)
-                throw new Exception("Green value must be an integer in the range 0-255.");
+                throw new \Exception("Green value must be an integer in the range 0-255.");
 
             $this->g = $g;
             $this->rgb2hsl();
@@ -289,7 +291,7 @@
                 return $this->b;
 
             if (!is_int($b) or $b < 0 or $b > 255)
-                throw new Exception("Blue value must be an integer in the range 0-255.");
+                throw new \Exception("Blue value must be an integer in the range 0-255.");
 
             $this->b = $b;
             $this->rgb2hsl();
@@ -302,7 +304,7 @@
                 return $this->h;
 
             if (!is_int($h))
-                throw new Exception("Hue value must be an integer.");
+                throw new \Exception("Hue value must be an integer.");
 
             if ($h > 360)
                 $h = $h % 360;
@@ -321,7 +323,7 @@
                 return $this->s;
 
             if (!is_float($s) or $s < 0 or $s > 1)
-                throw new Exception("Saturation value must be a float in the range 0-1.");
+                throw new \Exception("Saturation value must be a float in the range 0-1.");
 
             $this->s = $s;
             $this->hsl2rgb();
@@ -334,7 +336,7 @@
                 return $this->l;
 
             if (!is_float($l) or $l < 0 or $l > 1)
-                throw new Exception("Lightness value must be a float in the range 0-1.");
+                throw new \Exception("Lightness value must be a float in the range 0-1.");
 
             $this->l = $l;
             $this->hsl2rgb();
@@ -347,7 +349,7 @@
                 return $this->a;
 
             if (!is_float($a) or $a < 0 or $a > 1)
-                throw new Exception("Alpha value must be a float in the range 0-1.");
+                throw new \Exception("Alpha value must be a float in the range 0-1.");
 
             $this->a = $a;
 
@@ -358,7 +360,7 @@
             if (isset($str))
                 return $this->interpret_keyword($str);
 
-            $reflect = new ReflectionClass(get_class($this));
+            $reflect = new \ReflectionClass(get_class($this));
             $constants = $reflect->getConstants();
 
             $colors = array();
@@ -453,7 +455,7 @@
 
         private function interpret($color) {
             if (!is_string($color))
-                throw new Exception("Expected string in call to color constructor.");
+                throw new \Exception("Expected string in call to color constructor.");
 
             if (preg_match("/^rgba?\(/", $color))
                 if ($this->interpret_rgb($color))
@@ -471,7 +473,7 @@
                 if ($this->interpret_keyword($color))
                     return;
 
-            throw new Exception("Invalid string supplied to color constructor.");
+            throw new \Exception("Invalid string supplied to color constructor.");
         }
 
         private function interpret_rgb($str) {
