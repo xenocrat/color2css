@@ -2,7 +2,7 @@
     namespace xenocrat;
 
     class color2css {
-        const COLOR2CSS_VERSION_MAJOR        = 2;
+        const COLOR2CSS_VERSION_MAJOR        = 3;
         const COLOR2CSS_VERSION_MINOR        = 0;
 
         const CSS_COLOR_TRANSPARENT          = "#00000000";
@@ -188,7 +188,7 @@
                 $this->alpha($args[3]);
         }
 
-        public function hex($str = null) {
+        public function hex($str = null): string|bool {
             if (isset($str))
                 return $this->interpret_hex($str);
 
@@ -199,7 +199,7 @@
             return "#".$r.$g.$b;
         }
 
-        public function rgb($str = null) {
+        public function rgb($str = null): string|bool {
             if (isset($str))
                 return $this->interpret_rgb($str);
 
@@ -210,7 +210,7 @@
             return "rgb(".$r.", ".$g.", ".$b.")";
         }
 
-        public function hsl($str = null) {
+        public function hsl($str = null): string|bool {
             if (isset($str))
                 return $this->interpret_hsl($str);
 
@@ -221,7 +221,7 @@
             return "hsl(".$h.", ".$s."%, ".$l."%)";
         }
 
-        public function hexa($str = null) {
+        public function hexa($str = null): string|bool {
             if (isset($str))
                 return $this->interpret_hex($str);
 
@@ -234,7 +234,7 @@
             return "#".$r.$g.$b.$a;
         }
 
-        public function rgba($str = null) {
+        public function rgba($str = null): string|bool {
             if (isset($str))
                 return $this->interpret_rgb($str);
 
@@ -247,7 +247,7 @@
             return "rgba(".$r.", ".$g.", ".$b.", ".$a.")";
         }
 
-        public function hsla($str = null) {
+        public function hsla($str = null): string|bool {
             if (isset($str))
                 return $this->interpret_hsl($str);
 
@@ -260,7 +260,7 @@
             return "hsla(".$h.", ".$s."%, ".$l."%, ".$a.")";
         }
 
-        public function red($r = null) {
+        public function red($r = null): int|bool {
             if (!isset($r))
                 return $this->r;
 
@@ -273,7 +273,7 @@
             return true;
         }
 
-        public function green($g = null) {
+        public function green($g = null): int|bool {
             if (!isset($g))
                 return $this->g;
 
@@ -286,7 +286,7 @@
             return true;
         }
 
-        public function blue($b = null) {
+        public function blue($b = null): int|bool {
             if (!isset($b))
                 return $this->b;
 
@@ -299,7 +299,7 @@
             return true;
         }
 
-        public function hue($h = null) {
+        public function hue($h = null): int|bool {
             if (!isset($h))
                 return $this->h;
 
@@ -318,7 +318,7 @@
             return true;
         }
 
-        public function saturation($s = null) {
+        public function saturation($s = null): float|bool {
             if (!isset($s))
                 return $this->s;
 
@@ -331,7 +331,7 @@
             return true;
         }
 
-        public function lightness($l = null) {
+        public function lightness($l = null): float|bool {
             if (!isset($l))
                 return $this->l;
 
@@ -344,7 +344,7 @@
             return true;
         }
 
-        public function alpha($a = null) {
+        public function alpha($a = null): float|bool {
             if (!isset($a))
                 return $this->a;
 
@@ -356,7 +356,7 @@
             return true;
         }
 
-        public function keyword($str = null) {
+        public function keyword($str = null): string|bool {
             if (isset($str))
                 return $this->interpret_keyword($str);
 
@@ -380,7 +380,7 @@
             return false;
         }
 
-        private function rgb2hsl() {
+        private function rgb2hsl(): void {
             $r = $this->r / 255;
             $g = $this->g / 255;
             $b = $this->b / 255;
@@ -416,7 +416,7 @@
             $this->l = (float) $l;
         }
 
-        private function hsl2rgb() {
+        private function hsl2rgb(): void {
             $h = $this->h / 360;
             $s = $this->s;
             $l = $this->l;
@@ -434,7 +434,7 @@
 
         }
 
-        private function hue2rgb($m1, $m2, $h) {
+        private function hue2rgb($m1, $m2, $h): float {
             if ($h < 0)
                 $h = $h + 1;
 
@@ -453,7 +453,7 @@
             return $m1;
         }
 
-        private function interpret($color) {
+        private function interpret($color): void {
             if (!is_string($color))
                 throw new \Exception("Expected string in call to color constructor.");
 
@@ -476,7 +476,7 @@
             throw new \Exception("Invalid string supplied to color constructor.");
         }
 
-        private function interpret_rgb($str) {
+        private function interpret_rgb($str): bool {
             $regex = "/^rgba?\(([0-9]+%?)[, ]+([0-9]+%?)[, ]+([0-9]+%?)([, \/]+[\.0-9]+%?)?\)/";
 
             if (!preg_match($regex, $str, $rgb))
@@ -517,7 +517,7 @@
             return true; 
         }
 
-        private function interpret_hsl($str) {
+        private function interpret_hsl($str): bool {
             $regex = "/^hsla?\(([0-9]+)[, ]+([0-9]+%)[, ]+([0-9]+%)([, \/]+[\.0-9]+%?)?\)/";
 
             if (!preg_match($regex, $str, $hsl))
@@ -558,7 +558,7 @@
             return true; 
         }
 
-        private function interpret_hex($str) {
+        private function interpret_hex($str): bool {
             $regex_45 = "/^#([0-9a-f])([0-9a-f])([0-9a-f])([0-9a-f])?/i";
             $regex_79 = "/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})?/i";
 
@@ -617,7 +617,7 @@
             return true;
         }
 
-        private function interpret_keyword($str) {
+        private function interpret_keyword($str): bool {
             $const = 'self::CSS_COLOR_'.strtoupper($str);
 
             if (defined($const))
