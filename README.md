@@ -4,7 +4,7 @@ color2css is a PHP class for handling CSS color conversions.
 
 ## Requirements
 
-* PHP 5.4+
+* PHP 8.0+
 
 ## Usage
 
