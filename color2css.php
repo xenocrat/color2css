@@ -155,13 +155,10 @@
         const CSS_COLOR_YELLOWGREEN          = "#9acd32ff";
         const CSS_COLOR_REBECCAPURPLE        = "#663399ff";
 
-        private $r                           = 0;
-        private $g                           = 0;
-        private $b                           = 0;
-        private $h                           = 0;
-        private $s                           = 0.0;
-        private $l                           = 0.0;
-        private $a                           = 0.0;
+        private $rgb   = array("r" => 0.0, "g" => 0.0, "b" => 0.0);
+        private $hsl   = array("h" => 0.0, "s" => 0.0, "l" => 0.0);
+        private $hwb   = array("h" => 0.0, "w" => 0.0, "b" => 0.0);
+        private $alpha = 0.0;
 
         public function __construct($color = "transparent") {
             $args = func_get_args();
@@ -172,139 +169,130 @@
             if (count($args) < 3)
                 throw new \Exception("Missing arguments in call to color constructor.");
 
-            if (is_float($args[1])) {
-                $this->hue($args[0]);
-                $this->saturation($args[1]);
-                $this->lightness($args[2]);
-            }
-
-            if (is_int($args[1])) {
-                $this->red($args[0]);
-                $this->green($args[1]);
-                $this->blue($args[2]);
-            }
+            $this->red($args[0]);
+            $this->green($args[1]);
+            $this->blue($args[2]);
 
             if (count($args) == 4)
                 $this->alpha($args[3]);
-        }
-
-        public function hex($str = null): string|bool {
-            if (isset($str))
-                return $this->interpret_hex($str);
-
-            $r = str_pad(dechex($this->r), 2, "0", STR_PAD_LEFT);
-            $g = str_pad(dechex($this->g), 2, "0", STR_PAD_LEFT);
-            $b = str_pad(dechex($this->b), 2, "0", STR_PAD_LEFT);
-
-            return "#".$r.$g.$b;
         }
 
         public function rgb($str = null): string|bool {
             if (isset($str))
                 return $this->interpret_rgb($str);
 
-            $r = $this->r;
-            $g = $this->g;
-            $b = $this->b;
+            $r = (int) round($this->rgb["r"] * 255);
+            $g = (int) round($this->rgb["g"] * 255);
+            $b = (int) round($this->rgb["b"] * 255);
+            $a = $this->num($this->alpha);
 
-            return "rgb(".$r.", ".$g.", ".$b.")";
+            return "rgb(".$r.", ".$g.", ".$b.", ".$a.")";
         }
 
         public function hsl($str = null): string|bool {
             if (isset($str))
                 return $this->interpret_hsl($str);
 
-            $h = $this->h;
-            $s = (int) round($this->s * 100);
-            $l = (int) round($this->l * 100);
+            $h = (int) round($this->hsl["h"]);
+            $s = (int) round($this->hsl["s"] * 100);
+            $l = (int) round($this->hsl["l"] * 100);
+            $a = $this->num($this->alpha);
 
-            return "hsl(".$h.", ".$s."%, ".$l."%)";
+            return "hsl(".$h.", ".$s."%, ".$l."%, ".$a.")";
+        }
+
+        public function hwb($str = null): string|bool {
+            if (isset($str))
+                return $this->interpret_hwb($str);
+
+            $h = (int) round($this->hwb["h"]);
+            $w = (int) round($this->hwb["w"] * 100);
+            $b = (int) round($this->hwb["b"] * 100);
+            $a = $this->num($this->alpha);
+
+            return "hwb(".$h." ".$w."% ".$b."% / ".$a.")";
+        }
+
+        public function hex($str = null): string|bool {
+            if (isset($str))
+                return $this->interpret_hex($str);
+
+            $r = (int) round($this->rgb["r"]);
+            $g = (int) round($this->rgb["g"]);
+            $b = (int) round($this->rgb["b"]);
+
+            $r = str_pad(dechex($r), 2, "0", STR_PAD_LEFT);
+            $g = str_pad(dechex($g), 2, "0", STR_PAD_LEFT);
+            $b = str_pad(dechex($b), 2, "0", STR_PAD_LEFT);
+
+            return "#".$r.$g.$b;
         }
 
         public function hexa($str = null): string|bool {
             if (isset($str))
                 return $this->interpret_hex($str);
 
-            $r = str_pad(dechex($this->r), 2, "0", STR_PAD_LEFT);
-            $g = str_pad(dechex($this->g), 2, "0", STR_PAD_LEFT);
-            $b = str_pad(dechex($this->b), 2, "0", STR_PAD_LEFT);
-            $a = (int) round($this->a * 255);
+            $r = (int) round($this->rgb["r"] * 255);
+            $g = (int) round($this->rgb["g"] * 255);
+            $b = (int) round($this->rgb["b"] * 255);
+            $a = (int) round($this->alpha * 255);
+
+            $r = str_pad(dechex($r), 2, "0", STR_PAD_LEFT);
+            $g = str_pad(dechex($g), 2, "0", STR_PAD_LEFT);
+            $b = str_pad(dechex($b), 2, "0", STR_PAD_LEFT);
             $a = str_pad(dechex($a), 2, "0", STR_PAD_LEFT);
 
             return "#".$r.$g.$b.$a;
         }
 
-        public function rgba($str = null): string|bool {
-            if (isset($str))
-                return $this->interpret_rgb($str);
-
-            $r = $this->r;
-            $g = $this->g;
-            $b = $this->b;
-            $a = round($this->a, 2);
-            $a = ($a == 1.00 or $a == 0.00) ? (int) $a : number_format($this->a, 2) ;
-
-            return "rgba(".$r.", ".$g.", ".$b.", ".$a.")";
-        }
-
-        public function hsla($str = null): string|bool {
-            if (isset($str))
-                return $this->interpret_hsl($str);
-
-            $h = $this->h;
-            $s = (int) round($this->s * 100);
-            $l = (int) round($this->l * 100);
-            $a = round($this->a, 2);
-            $a = ($a == 1.00 or $a == 0.00) ? (int) $a : number_format($this->a, 2) ;
-
-            return "hsla(".$h.", ".$s."%, ".$l."%, ".$a.")";
-        }
-
-        public function red($r = null): int|bool {
+        public function red($r = null): float|bool {
             if (!isset($r))
-                return $this->r;
+                return $this->rgb["r"];
 
-            if (!is_int($r) or $r < 0 or $r > 255)
-                throw new \Exception("Red value must be an integer in the range 0-255.");
+            if ($r < 0 or $r > 1)
+                throw new \Exception("Red value must be in the range 0-1.");
 
-            $this->r = $r;
-            $this->rgb2hsl();
+            $this->rgb["r"] = (float) $r;
+            $this->hsl = $this->rgb2hsl($this->rgb);
+            $this->hwb = $this->rgb2hwb($this->rgb);
 
             return true;
         }
 
-        public function green($g = null): int|bool {
+        public function green($g = null): float|bool {
             if (!isset($g))
-                return $this->g;
+                return $this->rgb["g"];
 
-            if (!is_int($g) or $g < 0 or $g > 255)
-                throw new \Exception("Green value must be an integer in the range 0-255.");
+            if ($g < 0 or $g > 1)
+                throw new \Exception("Green value must be in the range 0-1.");
 
-            $this->g = $g;
-            $this->rgb2hsl();
+            $this->rgb["g"] = (float) $g;
+            $this->hsl = $this->rgb2hsl($this->rgb);
+            $this->hwb = $this->rgb2hwb($this->rgb);
 
             return true;
         }
 
-        public function blue($b = null): int|bool {
+        public function blue($b = null): float|bool {
             if (!isset($b))
-                return $this->b;
+                return $this->rgb["b"];
 
-            if (!is_int($b) or $b < 0 or $b > 255)
-                throw new \Exception("Blue value must be an integer in the range 0-255.");
+            if ($b < 0 or $b > 1)
+                throw new \Exception("Blue value must be in the range 0-1.");
 
-            $this->b = $b;
-            $this->rgb2hsl();
+            $this->rgb["b"] = (float) $b;
+            $this->hsl = $this->rgb2hsl($this->rgb);
+            $this->hwb = $this->rgb2hwb($this->rgb);
 
             return true;
         }
 
-        public function hue($h = null): int|bool {
+        public function hue($h = null): float|bool {
             if (!isset($h))
-                return $this->h;
+                return $this->hsl["h"];
 
-            if (!is_int($h))
-                throw new \Exception("Hue value must be an integer.");
+            if (!is_int($h) and !is_float($h))
+                throw new \Exception("Hue value must be an integer or a float.");
 
             if ($h > 360)
                 $h = $h % 360;
@@ -312,46 +300,77 @@
             while ($h < 0)
                 $h = $h + 360;
 
-            $this->h = $h;
-            $this->hsl2rgb();
+            $this->hsl["h"] = (float) $h;
+            $this->rgb = $this->hsl2rgb($this->hsl);
+            $this->hwb = $this->rgb2hwb($this->rgb);
 
             return true;
         }
 
         public function saturation($s = null): float|bool {
             if (!isset($s))
-                return $this->s;
+                return $this->hsl["s"];
 
-            if (!is_float($s) or $s < 0 or $s > 1)
-                throw new \Exception("Saturation value must be a float in the range 0-1.");
+            if ($s < 0 or $s > 1)
+                throw new \Exception("Saturation value must be in the range 0-1.");
 
-            $this->s = $s;
-            $this->hsl2rgb();
+            $this->hsl["s"] = (float) $s;
+            $this->rgb = $this->hsl2rgb($this->hsl);
+            $this->hwb = $this->rgb2hwb($this->rgb);
 
             return true;
         }
 
         public function lightness($l = null): float|bool {
             if (!isset($l))
-                return $this->l;
+                return $this->hsl["l"];
 
-            if (!is_float($l) or $l < 0 or $l > 1)
-                throw new \Exception("Lightness value must be a float in the range 0-1.");
+            if ($l < 0 or $l > 1)
+                throw new \Exception("Lightness value must be in the range 0-1.");
 
-            $this->l = $l;
-            $this->hsl2rgb();
+            $this->hsl["l"] = (float) $l;
+            $this->rgb = $this->hsl2rgb($this->hsl);
+            $this->hwb = $this->rgb2hwb($this->rgb);
+
+            return true;
+        }
+
+        public function whiteness($w = null): float|bool {
+            if (!isset($w))
+                return $this->hwb["w"];
+
+            if ($w < 0 or $w > 1)
+                throw new \Exception("Whiteness value must be in the range 0-1.");
+
+            $this->hwb["w"] = (float) $w;
+            $this->rgb = $this->hwb2rgb($this->hwb);
+            $this->hsl = $this->rgb2hsl($this->rgb);
+
+            return true;
+        }
+
+        public function blackness($d = null): float|bool {
+            if (!isset($d))
+                return $this->hwb["b"];
+
+            if ($d < 0 or $d > 1)
+                throw new \Exception("Blackness value must be in the range 0-1.");
+
+            $this->hwb["b"] = (float) $d;
+            $this->rgb = $this->hwb2rgb($this->hwb);
+            $this->hsl = $this->rgb2hsl($this->rgb);
 
             return true;
         }
 
         public function alpha($a = null): float|bool {
             if (!isset($a))
-                return $this->a;
+                return $this->alpha;
 
-            if (!is_float($a) or $a < 0 or $a > 1)
-                throw new \Exception("Alpha value must be a float in the range 0-1.");
+            if ($a < 0 or $a > 1)
+                throw new \Exception("Alpha value must be in the range 0-1.");
 
-            $this->a = $a;
+            $this->alpha = (float) $a;
 
             return true;
         }
@@ -380,10 +399,47 @@
             return false;
         }
 
-        private function rgb2hsl(): void {
-            $r = $this->r / 255;
-            $g = $this->g / 255;
-            $b = $this->b / 255;
+        public function keywords(): array {
+            $keywords = array();
+
+            $reflect = new \ReflectionClass(get_class($this));
+            $constants = $reflect->getConstants();
+
+            foreach ($constants as $key => $val) {
+                if (preg_match("/^CSS_COLOR_/", $key))
+                    $keywords[strtolower(substr($key, 10))] = $val;
+            }
+
+            return $keywords;
+        }
+
+        private function deg($str): float {
+            if (preg_match("/^[\.0-9]+grad$/i", $str))
+                return (float) $str * 0.9;
+
+            if (preg_match("/^[\.0-9]+rad$/i", $str))
+                return (float) $str * (180 / M_PI);
+
+            if (preg_match("/^[\.0-9]+turn$/i", $str))
+                return (float) $str * 360;
+
+            return (float) $str;
+        }
+
+        private function num($float): string {
+            $dec = round($float, 2);
+
+            $str = ($dec == 1.00 or $dec == 0.00) ?
+                number_format($dec, 0) :
+                number_format($dec, 2) ;
+
+            return $str;
+        }
+
+        private function rgb2hsl($rgb): array {
+            $r = $rgb["r"];
+            $g = $rgb["g"];
+            $b = $rgb["b"];
 
             $max = max($r, $g, $b);
             $min = min($r, $g, $b);
@@ -411,15 +467,29 @@
             while ($h < 0)
                 $h = $h + 360;
 
-            $this->h = (int) $h;
-            $this->s = (float) $s;
-            $this->l = (float) $l;
+            if ($s > 1)
+                $s = 1;
+
+            if ($s < 0)
+                $s = 0;
+
+            if ($l > 1)
+                $l = 1;
+
+            if ($l < 0)
+                $l = 0;
+
+            return array(
+                "h" => (float) $h,
+                "s" => (float) $s,
+                "l" => (float) $l
+            );
         }
 
-        private function hsl2rgb(): void {
-            $h = $this->h / 360;
-            $s = $this->s;
-            $l = $this->l;
+        private function hsl2rgb($hsl): array {
+            $h = $hsl["h"] / 360;
+            $s = $hsl["s"];
+            $l = $hsl["l"];
 
             $m2 = ($l <= 0.5) ? $l * ($s + 1) : ($l + $s) - ($l * $s) ;
             $m1 = ($l * 2) - $m2;
@@ -428,10 +498,95 @@
             $g = $this->hue2rgb($m1, $m2, $h);
             $b = $this->hue2rgb($m1, $m2, $h - (1 / 3));
 
-            $this->r = (int) round($r * 255);
-            $this->g = (int) round($g * 255);
-            $this->b = (int) round($b * 255);
+            if ($r > 1)
+                $r = 1;
 
+            if ($r < 0)
+                $r = 0;
+
+            if ($g > 1)
+                $g = 1;
+
+            if ($g < 0)
+                $g = 0;
+
+            if ($b > 1)
+                $b = 1;
+
+            if ($b < 0)
+                $b = 0;
+
+            return array(
+                "r" => (float) $r,
+                "g" => (float) $g,
+                "b" => (float) $b
+            );
+        }
+
+        private function rgb2hwb($rgb): array {
+            $r = $rgb["r"];
+            $g = $rgb["g"];
+            $b = $rgb["b"];
+            $w = min($r, $g, $b);
+            $d = 1 - max($r, $g, $b);
+
+            if ($w > 1)
+                $w = 1;
+
+            if ($w < 0)
+                $w = 0;
+
+            if ($b > 1)
+                $b = 1;
+
+            if ($b < 0)
+                $b = 0;
+
+            return array(
+                "h" => $this->rgb2hsl($rgb)["h"],
+                "w" => (float) $w,
+                "b" => (float) $d
+            );
+        }
+
+        private function hwb2rgb($hwb): array {
+            $h = $hwb["h"];
+            $w = $hwb["w"];
+            $d = $hwb["b"];
+
+            if ($w + $d >= 1) {
+                $n = $w / ($w + $d);
+                $r = $g = $b = $n;
+            } else {
+                $rgb = $this->hsl2rgb(array("h" => $h, "s" => 1.0, "l" => 0.5));
+                $r = ($rgb["r"] * ((1 - $w) - $d)) + $w;
+                $g = ($rgb["g"] * ((1 - $w) - $d)) + $w;
+                $b = ($rgb["b"] * ((1 - $w) - $d)) + $w;
+            }
+
+            if ($r > 1)
+                $r = 1;
+
+            if ($r < 0)
+                $r = 0;
+
+            if ($g > 1)
+                $g = 1;
+
+            if ($g < 0)
+                $g = 0;
+
+            if ($b > 1)
+                $b = 1;
+
+            if ($b < 0)
+                $b = 0;
+
+            return array(
+                "r" => (float) $r,
+                "g" => (float) $g,
+                "b" => (float) $b
+            );
         }
 
         private function hue2rgb($m1, $m2, $h): float {
@@ -465,6 +620,10 @@
                 if ($this->interpret_hsl($color))
                     return;
 
+            if (preg_match("/^hwb\(/", $color))
+                if ($this->interpret_hwb($color))
+                    return;
+
             if (preg_match("/^#[0-9a-f]{3,8}/", $color))
                 if ($this->interpret_hex($color))
                     return;
@@ -477,7 +636,7 @@
         }
 
         private function interpret_rgb($str): bool {
-            $regex = "/^rgba?\(([0-9]+%?)[, ]+([0-9]+%?)[, ]+([0-9]+%?)([, \/]+[\.0-9]+%?)?\)/";
+            $regex = "/^rgba?\(([0-9]+%?) *[, ] *([0-9]+%?) *[, ] *([0-9]+%?)( *[,\/] *[\.0-9]+%?)?\)/";
 
             if (!preg_match($regex, $str, $rgb))
                 return false;
@@ -489,16 +648,16 @@
 
                 switch ($i) {
                     case 1:
-                        $r = (int) (strpos($val, "%") ? (int) $val * 2.55 : $val);
+                        $r = (strpos($val, "%") ? (int) $val / 100 : (int) $val / 255);
                         break;
                     case 2:
-                        $g = (int) (strpos($val, "%") ? (int) $val * 2.55 : $val);
+                        $g = (strpos($val, "%") ? (int) $val / 100 : (int) $val / 255);
                         break;
                     case 3:
-                        $b = (int) (strpos($val, "%") ? (int) $val * 2.55 : $val);
+                        $b = (strpos($val, "%") ? (int) $val / 100 : (int) $val / 255);
                         break;
                     case 4:
-                        $a = (float) (strpos($val, "%") ? (int) $val / 100 : $val);
+                        $a = (strpos($val, "%") ? (int) $val / 100 : (float) $val);
                         break;
                 }
             }
@@ -506,7 +665,7 @@
             if ($r < 0 or $g < 0 or $b < 0 or $a < 0)
                 return false;
 
-            if ($r > 255 or $g > 255 or $b > 255 or $a > 1)
+            if ($r > 1 or $g > 1 or $b > 1 or $a > 1)
                 return false;
 
             $this->red($r);
@@ -518,7 +677,7 @@
         }
 
         private function interpret_hsl($str): bool {
-            $regex = "/^hsla?\(([0-9]+)[, ]+([0-9]+%)[, ]+([0-9]+%)([, \/]+[\.0-9]+%?)?\)/";
+            $regex = "/^hsla?\((-?[\.0-9]+[a-zA-Z]*) *[, ] *([0-9]+%) *[, ] *([0-9]+%)( *[,\/] *[\.0-9]+%?)?\)/";
 
             if (!preg_match($regex, $str, $hsl))
                 return false;
@@ -530,21 +689,21 @@
 
                 switch ($i) {
                     case 1:
-                        $h = (int) $val;
+                        $h = $this->deg($val);
                         break;
                     case 2:
-                        $s = (float) ((int) $val / 100);
+                        $s = (int) $val / 100;
                         break;
                     case 3:
-                        $l = (float) ((int) $val / 100);
+                        $l = (int) $val / 100;
                         break;
                     case 4:
-                        $a = (float) (strpos($val, "%") ? (int) $val / 100 : $val);
+                        $a = (strpos($val, "%") ? (int) $val / 100 : (float) $val);
                         break;
                 }
             }
 
-            if ($h < 0 or $s < 0 or $l < 0 or $a < 0)
+            if ($s < 0 or $l < 0 or $a < 0)
                 return false;
 
             if ($s > 1 or $l > 1 or $a > 1)
@@ -553,6 +712,47 @@
             $this->hue($h);
             $this->saturation($s);
             $this->lightness($l);
+            $this->alpha($a);
+
+            return true; 
+        }
+
+        private function interpret_hwb($str): bool {
+            $regex = "/^hwb\((-?[\.0-9]+[a-zA-Z]*) +([0-9]+%) +([0-9]+%)( *\/ *[\.0-9]+%?)?\)/";
+
+            if (!preg_match($regex, $str, $hwb))
+                return false;
+
+            $a = 1.0;
+
+            for ($i = 1; $i < count($hwb) ; $i++) { 
+                $val = trim($hwb[$i], ", /");
+
+                switch ($i) {
+                    case 1:
+                        $h = $this->deg($val);
+                        break;
+                    case 2:
+                        $w = (int) $val / 100;
+                        break;
+                    case 3:
+                        $d = (int) $val / 100;
+                        break;
+                    case 4:
+                        $a = (strpos($val, "%") ? (int) $val / 100 : (float) $val);
+                        break;
+                }
+            }
+
+            if ($w < 0 or $d < 0 or $a < 0)
+                return false;
+
+            if ($w > 1 or $d > 1 or $a > 1)
+                return false;
+
+            $this->hue($h);
+            $this->whiteness($w);
+            $this->blackness($d);
             $this->alpha($a);
 
             return true; 
@@ -589,16 +789,16 @@
 
                 switch ($i) {
                     case 1:
-                        $r = (int) $dec;
+                        $r = ($dec / 255);
                         break;
                     case 2:
-                        $g = (int) $dec;
+                        $g = ($dec / 255);
                         break;
                     case 3:
-                        $b = (int) $dec;
+                        $b = ($dec / 255);
                         break;
                     case 4:
-                        $a = (float) ((int) $dec / 255);
+                        $a = ($dec / 255);
                         break;
                 }
             }
@@ -606,7 +806,7 @@
             if ($r < 0 or $g < 0 or $b < 0 or $a < 0)
                 return false;
 
-            if ($r > 255 or $g > 255 or $b > 255 or $a > 1)
+            if ($r > 1 or $g > 1 or $b > 1 or $a > 1)
                 return false;
 
             $this->red($r);
