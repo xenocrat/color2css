@@ -57,8 +57,9 @@ Adjust the alpha value of a color:
 
 Export a CSS color definition:
 
-    $color2css->hex();  // returns "#ff6347"
-    $color2css->hexa(); // returns "#ff634780"
-    $color2css->rgb();  // returns "rgb(255, 99, 71, 0.50)"
-    $color2css->hsl();  // returns "hsl(9, 100%, 64%, 0.50)"
-    $color2css->hwb();  // returns "hwb(9 28% 0% / 1)"
+    $color2css->hex();     // returns "#ff6347"
+    $color2css->hexa();    // returns "#ff634780"
+    $color2css->rgb();     // returns "rgb(255, 99, 71, 0.50)"
+    $color2css->hsl();     // returns "hsl(9, 100%, 64%, 0.50)"
+    $color2css->hwb();     // returns "hwb(9 28% 0% / 1)"
+    $color2css->keyword(); // returns "tomato";
