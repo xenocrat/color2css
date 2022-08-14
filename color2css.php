@@ -2,7 +2,7 @@
     namespace xenocrat;
 
     class color2css {
-        const COLOR2CSS_VERSION_MAJOR        = 3;
+        const COLOR2CSS_VERSION_MAJOR        = 4;
         const COLOR2CSS_VERSION_MINOR        = 0;
 
         const CSS_COLOR_TRANSPARENT          = "#00000000";
