@@ -46,6 +46,11 @@ Adjust the HSL values of a color:
     $color2css->saturation(1.0);
     $color2css->lightness(0.64);
 
+Adjust the whiteness and blackness of a color:
+
+    $color2css->whiteness(0.28);
+    $color2css->blackness(0);
+
 Adjust the alpha value of a color:
 
     $color2css->alpha(0.5);
