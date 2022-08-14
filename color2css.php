@@ -249,7 +249,7 @@
             if (!isset($r))
                 return $this->rgb["r"];
 
-            if ($r < 0 or $r > 1)
+            if (!is_numeric($r) or $r < 0 or $r > 1)
                 throw new \Exception("Red value must be in the range 0-1.");
 
             $this->rgb["r"] = (float) $r;
@@ -263,7 +263,7 @@
             if (!isset($g))
                 return $this->rgb["g"];
 
-            if ($g < 0 or $g > 1)
+            if (!is_numeric($g) or $g < 0 or $g > 1)
                 throw new \Exception("Green value must be in the range 0-1.");
 
             $this->rgb["g"] = (float) $g;
@@ -277,7 +277,7 @@
             if (!isset($b))
                 return $this->rgb["b"];
 
-            if ($b < 0 or $b > 1)
+            if (!is_numeric($b) or $b < 0 or $b > 1)
                 throw new \Exception("Blue value must be in the range 0-1.");
 
             $this->rgb["b"] = (float) $b;
@@ -291,8 +291,8 @@
             if (!isset($h))
                 return $this->hsl["h"];
 
-            if (!is_int($h) and !is_float($h))
-                throw new \Exception("Hue value must be an integer or a float.");
+            if (!is_numeric($h))
+                throw new \Exception("Hue value must be numeric.");
 
             if ($h > 360)
                 $h = $h % 360;
@@ -311,7 +311,7 @@
             if (!isset($s))
                 return $this->hsl["s"];
 
-            if ($s < 0 or $s > 1)
+            if (!is_numeric($s) or $s < 0 or $s > 1)
                 throw new \Exception("Saturation value must be in the range 0-1.");
 
             $this->hsl["s"] = (float) $s;
@@ -325,7 +325,7 @@
             if (!isset($l))
                 return $this->hsl["l"];
 
-            if ($l < 0 or $l > 1)
+            if (!is_numeric($l) or $l < 0 or $l > 1)
                 throw new \Exception("Lightness value must be in the range 0-1.");
 
             $this->hsl["l"] = (float) $l;
@@ -339,7 +339,7 @@
             if (!isset($w))
                 return $this->hwb["w"];
 
-            if ($w < 0 or $w > 1)
+            if (!is_numeric($w) or $w < 0 or $w > 1)
                 throw new \Exception("Whiteness value must be in the range 0-1.");
 
             $this->hwb["w"] = (float) $w;
@@ -353,7 +353,7 @@
             if (!isset($d))
                 return $this->hwb["b"];
 
-            if ($d < 0 or $d > 1)
+            if (!is_numeric($d) or $d < 0 or $d > 1)
                 throw new \Exception("Blackness value must be in the range 0-1.");
 
             $this->hwb["b"] = (float) $d;
@@ -367,7 +367,7 @@
             if (!isset($a))
                 return $this->alpha;
 
-            if ($a < 0 or $a > 1)
+            if (!is_numeric($a) or $a < 0 or $a > 1)
                 throw new \Exception("Alpha value must be in the range 0-1.");
 
             $this->alpha = (float) $a;
