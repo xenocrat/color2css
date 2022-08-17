@@ -36,9 +36,9 @@ Interpret a CSS color definition:
 
 Adjust the RGB values of a color:
 
-    $color2css->red(255);
-    $color2css->green(99);
-    $color2css->blue(71);
+    $color2css->red(1.0);
+    $color2css->green(0.388);
+    $color2css->blue(0.278);
 
 Adjust the HSL values of a color:
 
