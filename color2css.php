@@ -217,9 +217,9 @@
             if (isset($str))
                 return $this->interpret_hex($str);
 
-            $r = (int) round($this->rgb["r"]);
-            $g = (int) round($this->rgb["g"]);
-            $b = (int) round($this->rgb["b"]);
+            $r = (int) round($this->rgb["r"] * 255);
+            $g = (int) round($this->rgb["g"] * 255);
+            $b = (int) round($this->rgb["b"] * 255);
 
             $r = str_pad(dechex($r), 2, "0", STR_PAD_LEFT);
             $g = str_pad(dechex($g), 2, "0", STR_PAD_LEFT);
