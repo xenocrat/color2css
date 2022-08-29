@@ -172,9 +172,7 @@
             $this->red($args[0]);
             $this->green($args[1]);
             $this->blue($args[2]);
-
-            if (count($args) == 4)
-                $this->alpha($args[3]);
+            $this->alpha((count($args) == 4) ? $args[3] : 1.0);
         }
 
         public function rgb($str = null): string|bool {
@@ -612,25 +610,30 @@
             if (!is_string($color))
                 throw new \Exception("Expected string in call to color constructor.");
 
-            if (preg_match("/^rgba?\(/", $color))
+            if (preg_match("/^rgba?\(/", $color)) {
                 if ($this->interpret_rgb($color))
                     return;
+            }
 
-            if (preg_match("/^hsla?\(/", $color))
+            if (preg_match("/^hsla?\(/", $color)) {
                 if ($this->interpret_hsl($color))
                     return;
+            }
 
-            if (preg_match("/^hwb\(/", $color))
+            if (preg_match("/^hwb\(/", $color)) {
                 if ($this->interpret_hwb($color))
                     return;
+            }
 
-            if (preg_match("/^#[0-9a-f]{3,8}/", $color))
+            if (preg_match("/^#[0-9a-f]{3,8}/", $color)) {
                 if ($this->interpret_hex($color))
                     return;
+            }
 
-            if (preg_match("/^[a-z]+/i", $color))
+            if (preg_match("/^[a-z]+/i", $color)) {
                 if ($this->interpret_keyword($color))
                     return;
+            }
 
             throw new \Exception("Invalid string supplied to color constructor.");
         }
