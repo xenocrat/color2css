@@ -3,7 +3,7 @@
 
     class color2css {
         const COLOR2CSS_VERSION_MAJOR        = 4;
-        const COLOR2CSS_VERSION_MINOR        = 0;
+        const COLOR2CSS_VERSION_MINOR        = 1;
 
         const CSS_COLOR_TRANSPARENT          = "#00000000";
         const CSS_COLOR_BLACK                = "#000000ff";
