@@ -636,7 +636,7 @@
         }
 
         private function interpret_rgb($str): bool {
-            $regex = "/^rgba?\(([0-9]+%?) *[, ] *([0-9]+%?) *[, ] *([0-9]+%?)( *[,\/] *[\.0-9]+%?)?\)/";
+            $regex = "/^rgba?\(([0-9]+%?) *, *([0-9]+%?) *, *([0-9]+%?)( *[,\/] *[\.0-9]+%?)?\)/";
 
             if (!preg_match($regex, $str, $rgb))
                 return false;
@@ -677,7 +677,7 @@
         }
 
         private function interpret_hsl($str): bool {
-            $regex = "/^hsla?\((-?[\.0-9]+[a-zA-Z]*) *[, ] *([0-9]+%) *[, ] *([0-9]+%)( *[,\/] *[\.0-9]+%?)?\)/";
+            $regex = "/^hsla?\((-?[\.0-9]+[a-zA-Z]*) *, *([0-9]+%) *, *([0-9]+%)( *[,\/] *[\.0-9]+%?)?\)/";
 
             if (!preg_match($regex, $str, $hsl))
                 return false;
