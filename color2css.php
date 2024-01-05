@@ -3,7 +3,7 @@
 
     class color2css {
         const COLOR2CSS_VERSION_MAJOR        = 4;
-        const COLOR2CSS_VERSION_MINOR        = 2;
+        const COLOR2CSS_VERSION_MINOR        = 3;
 
         const CSS_COLOR_TRANSPARENT          = "#00000000";
         const CSS_COLOR_BLACK                = "#000000ff";
@@ -167,7 +167,9 @@
                 return $this->interpret($color);
 
             if (count($args) < 3)
-                throw new \Exception("Missing arguments in call to color constructor.");
+                throw new \BadMethodCallException(
+                    "Missing arguments in call to color constructor."
+                );
 
             $this->red($args[0]);
             $this->green($args[1]);
@@ -248,7 +250,9 @@
                 return $this->rgb["r"];
 
             if (!is_numeric($r) or $r < 0 or $r > 1)
-                throw new \Exception("Red value must be in the range 0-1.");
+                throw new \RangeException(
+                    "Red value must be in the range 0-1."
+                );
 
             $this->rgb["r"] = (float) $r;
             $this->hsl = $this->rgb2hsl($this->rgb);
@@ -262,7 +266,9 @@
                 return $this->rgb["g"];
 
             if (!is_numeric($g) or $g < 0 or $g > 1)
-                throw new \Exception("Green value must be in the range 0-1.");
+                throw new \RangeException(
+                    "Green value must be in the range 0-1."
+                );
 
             $this->rgb["g"] = (float) $g;
             $this->hsl = $this->rgb2hsl($this->rgb);
@@ -276,7 +282,9 @@
                 return $this->rgb["b"];
 
             if (!is_numeric($b) or $b < 0 or $b > 1)
-                throw new \Exception("Blue value must be in the range 0-1.");
+                throw new \RangeException(
+                    "Blue value must be in the range 0-1."
+                );
 
             $this->rgb["b"] = (float) $b;
             $this->hsl = $this->rgb2hsl($this->rgb);
@@ -290,7 +298,9 @@
                 return $this->hsl["h"];
 
             if (!is_numeric($h))
-                throw new \Exception("Hue value must be numeric.");
+                throw new \InvalidArgumentException(
+                    "Hue value must be numeric."
+                );
 
             if ($h > 360)
                 $h = $h % 360;
@@ -310,7 +320,9 @@
                 return $this->hsl["s"];
 
             if (!is_numeric($s) or $s < 0 or $s > 1)
-                throw new \Exception("Saturation value must be in the range 0-1.");
+                throw new \RangeException(
+                    "Saturation value must be in the range 0-1."
+                );
 
             $this->hsl["s"] = (float) $s;
             $this->rgb = $this->hsl2rgb($this->hsl);
@@ -324,7 +336,9 @@
                 return $this->hsl["l"];
 
             if (!is_numeric($l) or $l < 0 or $l > 1)
-                throw new \Exception("Lightness value must be in the range 0-1.");
+                throw new \RangeException(
+                    "Lightness value must be in the range 0-1."
+                );
 
             $this->hsl["l"] = (float) $l;
             $this->rgb = $this->hsl2rgb($this->hsl);
@@ -338,7 +352,9 @@
                 return $this->hwb["w"];
 
             if (!is_numeric($w) or $w < 0 or $w > 1)
-                throw new \Exception("Whiteness value must be in the range 0-1.");
+                throw new \RangeException(
+                    "Whiteness value must be in the range 0-1."
+                );
 
             $this->hwb["w"] = (float) $w;
             $this->rgb = $this->hwb2rgb($this->hwb);
@@ -352,7 +368,9 @@
                 return $this->hwb["b"];
 
             if (!is_numeric($d) or $d < 0 or $d > 1)
-                throw new \Exception("Blackness value must be in the range 0-1.");
+                throw new \RangeException(
+                    "Blackness value must be in the range 0-1."
+                );
 
             $this->hwb["b"] = (float) $d;
             $this->rgb = $this->hwb2rgb($this->hwb);
@@ -366,7 +384,9 @@
                 return $this->alpha;
 
             if (!is_numeric($a) or $a < 0 or $a > 1)
-                throw new \Exception("Alpha value must be in the range 0-1.");
+                throw new \RangeException(
+                    "Alpha value must be in the range 0-1."
+                );
 
             $this->alpha = (float) $a;
 
@@ -608,7 +628,9 @@
 
         private function interpret($color): void {
             if (!is_string($color))
-                throw new \Exception("Expected string in call to color constructor.");
+                throw new \InvalidArgumentException(
+                    "Expected string in call to color constructor."
+                );
 
             if (preg_match("/^rgba?\(/", $color)) {
                 if ($this->interpret_rgb($color))
@@ -635,7 +657,9 @@
                     return;
             }
 
-            throw new \Exception("Invalid string supplied to color constructor.");
+            throw new \InvalidArgumentException(
+                "Invalid string supplied to color constructor."
+            );
         }
 
         private function interpret_rgb($str): bool {
