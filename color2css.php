@@ -465,17 +465,29 @@
             $c = $max - $min;
 
             $l = ($max + $min) / 2;
-            $s = ($l == 0 or $l == 1) ? 0 : $c / (1 - abs((2 * $l) - 1)) ;
+
+            $s = ($l == 0 or $l == 1) ?
+                0 :
+                $c / (1 - abs((2 * $l) - 1)) ;
 
             switch ($max) {
                 case $r:
-                    $h = ($c == 0) ? 0 : 60 * ($g - $b) / $c ;
+                    $h = ($c == 0) ?
+                        0 :
+                        60 * ($g - $b) / $c ;
+
                     break;
                 case $g:
-                    $h = ($c == 0) ? 0 : 60 * ((($b - $r) / $c) + 2) ;
+                    $h = ($c == 0) ?
+                        0 :
+                        60 * ((($b - $r) / $c) + 2) ;
+
                     break;
                 case $b:
-                    $h = ($c == 0) ? 0 : 60 * ((($r - $g) / $c) + 4) ;
+                    $h = ($c == 0) ?
+                        0 :
+                        60 * ((($r - $g) / $c) + 4) ;
+
                     break;
             }
 
@@ -509,7 +521,10 @@
             $s = $hsl["s"];
             $l = $hsl["l"];
 
-            $m2 = ($l <= 0.5) ? $l * ($s + 1) : ($l + $s) - ($l * $s) ;
+            $m2 = ($l <= 0.5) ?
+                $l * ($s + 1) :
+                ($l + $s) - ($l * $s) ;
+
             $m1 = ($l * 2) - $m2;
 
             $r = $this->hue2rgb($m1, $m2, $h + (1 / 3));
@@ -675,16 +690,28 @@
 
                 switch ($i) {
                     case 1:
-                        $r = (strpos($val, "%") ? (int) $val / 100 : (int) $val / 255);
+                        $r = (strpos($val, "%") ?
+                            (int) $val / 100 :
+                            (int) $val / 255) ;
+
                         break;
                     case 2:
-                        $g = (strpos($val, "%") ? (int) $val / 100 : (int) $val / 255);
+                        $g = (strpos($val, "%") ?
+                            (int) $val / 100 :
+                            (int) $val / 255) ;
+
                         break;
                     case 3:
-                        $b = (strpos($val, "%") ? (int) $val / 100 : (int) $val / 255);
+                        $b = (strpos($val, "%") ?
+                            (int) $val / 100 :
+                            (int) $val / 255) ;
+
                         break;
                     case 4:
-                        $a = (strpos($val, "%") ? (int) $val / 100 : (float) $val);
+                        $a = (strpos($val, "%") ?
+                            (int) $val / 100 :
+                            (float) $val) ;
+
                         break;
                 }
             }
@@ -725,7 +752,10 @@
                         $l = (int) $val / 100;
                         break;
                     case 4:
-                        $a = (strpos($val, "%") ? (int) $val / 100 : (float) $val);
+                        $a = (strpos($val, "%") ?
+                            (int) $val / 100 :
+                            (float) $val) ;
+
                         break;
                 }
             }
@@ -766,7 +796,10 @@
                         $d = (int) $val / 100;
                         break;
                     case 4:
-                        $a = (strpos($val, "%") ? (int) $val / 100 : (float) $val);
+                        $a = (strpos($val, "%") ?
+                            (int) $val / 100 :
+                            (float) $val) ;
+
                         break;
                 }
             }
