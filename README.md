@@ -10,14 +10,15 @@ color2css is a PHP class for CSS color interpreting and conversion.
 
 Define the CSS color `rebeccapurple` using various methods:
 
-    $color2css = new \xenocrat\color2css("rebeccapurple");
-    $color2css = new \xenocrat\color2css("#663399");
-    $color2css = new \xenocrat\color2css("rgb(102, 51, 153)");
-    $color2css = new \xenocrat\color2css("rgba(102, 51, 153, 1.0)");
-    $color2css = new \xenocrat\color2css("hsl(270, 50%, 40%)");
-    $color2css = new \xenocrat\color2css("hsla(270, 50%, 40%, 100%)");
-    $color2css = new \xenocrat\color2css("hwb(270 20% 40% / 1)");
-    $color2css = new \xenocrat\color2css(0.4, 0.2, 0.6, 1.0);
+    use xenocrat\color2css;
+    $color2css = new color2css("rebeccapurple");
+    $color2css = new color2css("#663399");
+    $color2css = new color2css("rgb(102, 51, 153)");
+    $color2css = new color2css("rgba(102, 51, 153, 1.0)");
+    $color2css = new color2css("hsl(270, 50%, 40%)");
+    $color2css = new color2css("hsla(270, 50%, 40%, 100%)");
+    $color2css = new color2css("hwb(270 20% 40% / 1)");
+    $color2css = new color2css(0.4, 0.2, 0.6, 1.0);
 
 Interpret a CSS color definition:
 
@@ -64,3 +65,9 @@ Export a CSS color definition:
     $color2css->hsl();     // returns "hsl(9, 100%, 64%, 1)"
     $color2css->hwb();     // returns "hwb(9 28% 0% / 1)"
     $color2css->keyword(); // returns "tomato";
+
+Calculate WCAG contrast ratio as a float value between 1 and 21:
+
+    $color1 = new color2css("white");
+    $color2 = new color2css("black");
+    $contrast = color2css::contrast($color1, $color2);
