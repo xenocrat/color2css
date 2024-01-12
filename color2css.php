@@ -155,9 +155,21 @@
         const CSS_COLOR_YELLOWGREEN          = "#9acd32ff";
         const CSS_COLOR_REBECCAPURPLE        = "#663399ff";
 
-        private $rgb   = array("r" => 0.0, "g" => 0.0, "b" => 0.0);
-        private $hsl   = array("h" => 0.0, "s" => 0.0, "l" => 0.0);
-        private $hwb   = array("h" => 0.0, "w" => 0.0, "b" => 0.0);
+        private $rgb = array(
+            "r" => 0.0,
+            "g" => 0.0,
+            "b" => 0.0
+        );
+        private $hsl = array(
+            "h" => 0.0,
+            "s" => 0.0,
+            "l" => 0.0
+        );
+        private $hwb = array(
+            "h" => 0.0,
+            "w" => 0.0,
+            "b" => 0.0
+        );
         private $alpha = 0.0;
 
         public function __construct($color = "transparent") {
@@ -431,6 +443,53 @@
             return $keywords;
         }
 
+        static function contrast($color1, $color2): float {
+            if (!$color1 instanceof color2css)
+                throw new \InvalidArgumentException(
+                    "Color 1 must be an instance of color2css."
+                );
+
+            if (!$color2 instanceof color2css)
+                throw new \InvalidArgumentException(
+                    "Color 2 must be an instance of color2css."
+                );
+
+            $l1 = self::luminance($color1);
+            $l2 = self::luminance($color2);
+
+            $c = ($l1 > $l2) ?
+                ($l1 + 0.05) / ($l2 + 0.05) :
+                ($l2 + 0.05) / ($l1 + 0.05) ;
+
+            return (float) $c;
+        }
+
+        static function luminance($color): float {
+            if (!$color instanceof color2css)
+                throw new \InvalidArgumentException(
+                    "Color must be an instance of color2css."
+                );
+
+            $n = $color->red();
+            $r = ($n <= 0.03928) ?
+                $n / 12.92 :
+                (($n + 0.055) / 1.055) ** 2.4 ;
+
+            $n = $color->green();
+            $g = ($n <= 0.03928) ?
+                $n / 12.92 :
+                (($n + 0.055) / 1.055) ** 2.4 ;
+
+            $n = $color->blue();
+            $b = ($n <= 0.03928) ?
+                $n / 12.92 :
+                (($n + 0.055) / 1.055) ** 2.4 ;
+
+            $l = ((0.2126 * $r) + (0.7152 * $g) + (0.0722 * $b));
+
+            return (float) $l;
+        }
+
         private function deg($str): float {
             if (preg_match("/^[\.0-9]+grad$/i", $str))
                 return (float) $str * 0.9;
@@ -463,7 +522,6 @@
             $min = min($r, $g, $b);
 
             $c = $max - $min;
-
             $l = ($max + $min) / 2;
 
             $s = ($l == 0 or $l == 1) ?
@@ -591,7 +649,10 @@
                 $n = $w / ($w + $d);
                 $r = $g = $b = $n;
             } else {
-                $rgb = $this->hsl2rgb(array("h" => $h, "s" => 1.0, "l" => 0.5));
+                $rgb = $this->hsl2rgb(
+                    array("h" => $h, "s" => 1.0, "l" => 0.5)
+                );
+
                 $r = ($rgb["r"] * ((1 - $w) - $d)) + $w;
                 $g = ($rgb["g"] * ((1 - $w) - $d)) + $w;
                 $b = ($rgb["b"] * ((1 - $w) - $d)) + $w;
@@ -708,9 +769,9 @@
 
                         break;
                     case 4:
-                        $a = (strpos($val, "%") ?
+                        $a = strpos($val, "%") ?
                             (int) $val / 100 :
-                            (float) $val) ;
+                            (float) $val ;
 
                         break;
                 }
@@ -752,9 +813,9 @@
                         $l = (int) $val / 100;
                         break;
                     case 4:
-                        $a = (strpos($val, "%") ?
+                        $a = strpos($val, "%") ?
                             (int) $val / 100 :
-                            (float) $val) ;
+                            (float) $val ;
 
                         break;
                 }
@@ -796,9 +857,9 @@
                         $d = (int) $val / 100;
                         break;
                     case 4:
-                        $a = (strpos($val, "%") ?
+                        $a = strpos($val, "%") ?
                             (int) $val / 100 :
-                            (float) $val) ;
+                            (float) $val ;
 
                         break;
                 }
@@ -849,16 +910,16 @@
 
                 switch ($i) {
                     case 1:
-                        $r = ($dec / 255);
+                        $r = $dec / 255;
                         break;
                     case 2:
-                        $g = ($dec / 255);
+                        $g = $dec / 255;
                         break;
                     case 3:
-                        $b = ($dec / 255);
+                        $b = $dec / 255;
                         break;
                     case 4:
-                        $a = ($dec / 255);
+                        $a = $dec / 255;
                         break;
                 }
             }
