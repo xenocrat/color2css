@@ -443,7 +443,7 @@
             return $keywords;
         }
 
-        static function contrast($color1, $color2): float {
+        public static function contrast($color1, $color2): float {
             if (!$color1 instanceof color2css)
                 throw new \InvalidArgumentException(
                     "Color 1 must be an instance of color2css."
@@ -464,7 +464,7 @@
             return (float) $c;
         }
 
-        static function luminance($color): float {
+        public static function luminance($color): float {
             if (!$color instanceof color2css)
                 throw new \InvalidArgumentException(
                     "Color must be an instance of color2css."
