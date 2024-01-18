@@ -61,9 +61,9 @@ Export a CSS color definition:
 
     $color2css->hex();     // returns "#ff6347"
     $color2css->hexa();    // returns "#ff6347ff"
-    $color2css->rgb();     // returns "rgb(255, 99, 71, 1)"
-    $color2css->hsl();     // returns "hsl(9, 100%, 64%, 1)"
-    $color2css->hwb();     // returns "hwb(9 28% 0% / 1)"
+    $color2css->rgb();     // returns "rgb(255 99 71 / 100%)"
+    $color2css->hsl();     // returns "hsl(9deg 100% 64% / 100%)"
+    $color2css->hwb();     // returns "hwb(9deg 28% 0% / 100%)"
     $color2css->keyword(); // returns "tomato";
 
 Calculate WCAG contrast ratio as a float value between 1 and 21:
