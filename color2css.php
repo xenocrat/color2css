@@ -2,8 +2,8 @@
     namespace xenocrat;
 
     class color2css {
-        const COLOR2CSS_VERSION_MAJOR        = 4;
-        const COLOR2CSS_VERSION_MINOR        = 4;
+        const COLOR2CSS_VERSION_MAJOR        = 5;
+        const COLOR2CSS_VERSION_MINOR        = 0;
 
         const CSS_COLOR_TRANSPARENT          = "#00000000";
         const CSS_COLOR_BLACK                = "#000000ff";
@@ -155,6 +155,34 @@
         const CSS_COLOR_YELLOWGREEN          = "#9acd32ff";
         const CSS_COLOR_REBECCAPURPLE        = "#663399ff";
 
+        const REGEX_RGB = (
+            "/^rgba?\(([\.0-9]+%?|none) +([\.0-9]+%?|none) +([\.0-9]+%?|none)( *\/ *[\.0-9]+%?|none)?\)/i"
+        );
+
+        const REGEX_RGB_LEGACY = (
+            "/^rgba?\(([\.0-9]+%?) *, *([\.0-9]+%?) *, *([\.0-9]+%?)( *[,\/] *[\.0-9]+%?)?\)/"
+        );
+
+        const REGEX_HSL = (
+            "/^hsla?\((-?[\.0-9]+[a-z]*|none) +([\.0-9]+%?|none) +([\.0-9]+%?|none)( *\/ *[\.0-9]+%?|none)?\)/i"
+        );
+
+        const REGEX_HSL_LEGACY = (
+            "/^hsla?\((-?[\.0-9]+[a-z]*) *, *([\.0-9]+%) *, *([\.0-9]+%)( *[,\/] *[\.0-9]+%?)?\)/i"
+        );
+
+        const REGEX_HWB = (
+            "/^hwb\((-?[\.0-9]+[a-z]*|none) +([\.0-9]+%|none) +([\.0-9]+%|none)( *\/ *[\.0-9]+%?|none)?\)/i"
+        );
+
+        const REGEX_HEX_45 = (
+            "/^#([0-9a-f])([0-9a-f])([0-9a-f])([0-9a-f])?/i"
+        );
+
+        const REGEX_HEX_79 = (
+            "/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})?/i"
+        );
+
         private $rgb = array(
             "r" => 0.0,
             "g" => 0.0,
@@ -196,9 +224,9 @@
             $r = (int) round($this->rgb["r"] * 255);
             $g = (int) round($this->rgb["g"] * 255);
             $b = (int) round($this->rgb["b"] * 255);
-            $a = $this->num($this->alpha);
+            $a = (int) round($this->alpha * 100);
 
-            return "rgb(".$r.", ".$g.", ".$b.", ".$a.")";
+            return "rgb(".$r." ".$g." ".$b." / ".$a."%)";
         }
 
         public function hsl($str = null): string|bool {
@@ -208,9 +236,9 @@
             $h = (int) round($this->hsl["h"]);
             $s = (int) round($this->hsl["s"] * 100);
             $l = (int) round($this->hsl["l"] * 100);
-            $a = $this->num($this->alpha);
+            $a = (int) round($this->alpha * 100);
 
-            return "hsl(".$h.", ".$s."%, ".$l."%, ".$a.")";
+            return "hsl(".$h."deg ".$s."% ".$l."% / ".$a."%)";
         }
 
         public function hwb($str = null): string|bool {
@@ -220,9 +248,9 @@
             $h = (int) round($this->hwb["h"]);
             $w = (int) round($this->hwb["w"] * 100);
             $b = (int) round($this->hwb["b"] * 100);
-            $a = $this->num($this->alpha);
+            $a = (int) round($this->alpha * 100);
 
-            return "hwb(".$h." ".$w."% ".$b."% / ".$a.")";
+            return "hwb(".$h."deg ".$w."% ".$b."% / ".$a."%)";
         }
 
         public function hex($str = null): string|bool {
@@ -503,16 +531,6 @@
             return (float) $str;
         }
 
-        private function num($float): string {
-            $dec = round($float, 2);
-
-            $str = ($dec == 1.00 or $dec == 0.00) ?
-                number_format($dec, 0) :
-                number_format($dec, 2) ;
-
-            return $str;
-        }
-
         private function rgb2hsl($rgb): array {
             $r = $rgb["r"];
             $g = $rgb["g"];
@@ -739,9 +757,10 @@
         }
 
         private function interpret_rgb($str): bool {
-            $regex = "/^rgba?\(([0-9]+%?) *, *([0-9]+%?) *, *([0-9]+%?)( *[,\/] *[\.0-9]+%?)?\)/";
-
-            if (!preg_match($regex, $str, $rgb))
+            if (
+                !preg_match(self::REGEX_RGB, $str, $rgb) and
+                !preg_match(self::REGEX_RGB_LEGACY, $str, $rgb)
+            )
                 return false;
 
             $a = 1.0;
@@ -749,28 +768,31 @@
             for ($i = 1; $i < count($rgb) ; $i++) { 
                 $val = trim($rgb[$i], ", /");
 
+                if (strtolower($val) == "none")
+                    $val = 0;
+
                 switch ($i) {
                     case 1:
                         $r = (strpos($val, "%") ?
-                            (int) $val / 100 :
-                            (int) $val / 255) ;
+                            (float) $val / 100 :
+                            (float) $val / 255) ;
 
                         break;
                     case 2:
                         $g = (strpos($val, "%") ?
-                            (int) $val / 100 :
-                            (int) $val / 255) ;
+                            (float) $val / 100 :
+                            (float) $val / 255) ;
 
                         break;
                     case 3:
                         $b = (strpos($val, "%") ?
-                            (int) $val / 100 :
-                            (int) $val / 255) ;
+                            (float) $val / 100 :
+                            (float) $val / 255) ;
 
                         break;
                     case 4:
                         $a = strpos($val, "%") ?
-                            (int) $val / 100 :
+                            (float) $val / 100 :
                             (float) $val ;
 
                         break;
@@ -792,9 +814,10 @@
         }
 
         private function interpret_hsl($str): bool {
-            $regex = "/^hsla?\((-?[\.0-9]+[a-zA-Z]*) *, *([0-9]+%) *, *([0-9]+%)( *[,\/] *[\.0-9]+%?)?\)/";
-
-            if (!preg_match($regex, $str, $hsl))
+            if (
+                !preg_match(self::REGEX_HSL, $str, $hsl) and
+                !preg_match(self::REGEX_HSL_LEGACY, $str, $hsl)
+            )
                 return false;
 
             $a = 1.0;
@@ -802,19 +825,22 @@
             for ($i = 1; $i < count($hsl) ; $i++) { 
                 $val = trim($hsl[$i], ", /");
 
+                if (strtolower($val) == "none")
+                    $val = 0;
+
                 switch ($i) {
                     case 1:
                         $h = $this->deg($val);
                         break;
                     case 2:
-                        $s = (int) $val / 100;
+                        $s = (float) $val / 100;
                         break;
                     case 3:
-                        $l = (int) $val / 100;
+                        $l = (float) $val / 100;
                         break;
                     case 4:
                         $a = strpos($val, "%") ?
-                            (int) $val / 100 :
+                            (float) $val / 100 :
                             (float) $val ;
 
                         break;
@@ -836,9 +862,7 @@
         }
 
         private function interpret_hwb($str): bool {
-            $regex = "/^hwb\((-?[\.0-9]+[a-zA-Z]*) +([0-9]+%) +([0-9]+%)( *\/ *[\.0-9]+%?)?\)/";
-
-            if (!preg_match($regex, $str, $hwb))
+            if (!preg_match(self::REGEX_HWB, $str, $hwb))
                 return false;
 
             $a = 1.0;
@@ -846,19 +870,22 @@
             for ($i = 1; $i < count($hwb) ; $i++) { 
                 $val = trim($hwb[$i], ", /");
 
+                if (strtolower($val) == "none")
+                    $val = 0;
+
                 switch ($i) {
                     case 1:
                         $h = $this->deg($val);
                         break;
                     case 2:
-                        $w = (int) $val / 100;
+                        $w = (float) $val / 100;
                         break;
                     case 3:
-                        $d = (int) $val / 100;
+                        $d = (float) $val / 100;
                         break;
                     case 4:
                         $a = strpos($val, "%") ?
-                            (int) $val / 100 :
+                            (float) $val / 100 :
                             (float) $val ;
 
                         break;
@@ -880,19 +907,16 @@
         }
 
         private function interpret_hex($str): bool {
-            $regex_45 = "/^#([0-9a-f])([0-9a-f])([0-9a-f])([0-9a-f])?/i";
-            $regex_79 = "/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})?/i";
-
             switch (strlen($str)) {
                 case 4:
                 case 5:
-                    if (!preg_match($regex_45, $str, $hex))
+                    if (!preg_match(self::REGEX_HEX_45, $str, $hex))
                         return false;
                     else
                         break;
                 case 7:
                 case 9:
-                    if (!preg_match($regex_79, $str, $hex))
+                    if (!preg_match(self::REGEX_HEX_79, $str, $hex))
                         return false;
                     else
                         break;
