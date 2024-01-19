@@ -1304,13 +1304,13 @@
                         $l = (float) $val;
                         break;
                     case 2:
-                        $a = strpos($val, "%") ?
+                        $c = strpos($val, "%") ?
                             (float) $val * 1.50 :
                             (float) $val ;
 
                         break;
                     case 3:
-                        $b = $this->deg($val);
+                        $h = $this->deg($val);
                         break;
                     case 4:
                         $p = strpos($val, "%") ?
