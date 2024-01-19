@@ -155,33 +155,81 @@
         const CSS_COLOR_YELLOWGREEN          = "#9acd32ff";
         const CSS_COLOR_REBECCAPURPLE        = "#663399ff";
 
-        const REGEX_RGB = (
-            "/^rgba?\(([\.0-9]+%?|none) +([\.0-9]+%?|none) +([\.0-9]+%?|none)( *\/ *[\.0-9]+%?|none)?\)/i"
-        );
+        const TRISTIMULUS_D65_2DEG_X         = 95.047;
+        const TRISTIMULUS_D65_2DEG_Y         = 100;
+        const TRISTIMULUS_D65_2DEG_Z         = 108.883;
 
-        const REGEX_RGB_LEGACY = (
-            "/^rgba?\(([\.0-9]+%?) *, *([\.0-9]+%?) *, *([\.0-9]+%?)( *[,\/] *[\.0-9]+%?)?\)/"
-        );
+        const REGEX_CSS_NUM                  = "-?[\.0-9]+%?";
+        const REGEX_CSS_HUE                  = "-?[\.0-9]+[a-z]*";
+        const REGEX_CSS_HEX                  = "[0-9a-f]";
 
-        const REGEX_HSL = (
-            "/^hsla?\((-?[\.0-9]+[a-z]*|none) +([\.0-9]+%?|none) +([\.0-9]+%?|none)( *\/ *[\.0-9]+%?|none)?\)/i"
-        );
+        const REGEX_RGB =
+            "/^rgba?\(".
+            "(".self::REGEX_CSS_NUM."|none) +".
+            "(".self::REGEX_CSS_NUM."|none) +".
+            "(".self::REGEX_CSS_NUM."|none)".
+            "( *\/ *".self::REGEX_CSS_NUM."|none)?".
+            "\)/i";
 
-        const REGEX_HSL_LEGACY = (
-            "/^hsla?\((-?[\.0-9]+[a-z]*) *, *([\.0-9]+%) *, *([\.0-9]+%)( *[,\/] *[\.0-9]+%?)?\)/i"
-        );
+        const REGEX_RGB_LEGACY =
+            "/^rgba?\(".
+            "(".self::REGEX_CSS_NUM.") *, *".
+            "(".self::REGEX_CSS_NUM.") *, *".
+            "(".self::REGEX_CSS_NUM.")".
+            "( *[,\/] *".self::REGEX_CSS_NUM.")?".
+            "\)/i";
 
-        const REGEX_HWB = (
-            "/^hwb\((-?[\.0-9]+[a-z]*|none) +([\.0-9]+%|none) +([\.0-9]+%|none)( *\/ *[\.0-9]+%?|none)?\)/i"
-        );
+        const REGEX_HSL =
+            "/^hsla?\(".
+            "(".self::REGEX_CSS_HUE."|none) +".
+            "(".self::REGEX_CSS_NUM."|none) +".
+            "(".self::REGEX_CSS_NUM."|none)".
+            "( *\/ *".self::REGEX_CSS_NUM."|none)?".
+            "\)/i";
 
-        const REGEX_HEX_45 = (
-            "/^#([0-9a-f])([0-9a-f])([0-9a-f])([0-9a-f])?/i"
-        );
+        const REGEX_HSL_LEGACY =
+            "/^hsla?\(".
+            "(".self::REGEX_CSS_HUE.") *, *".
+            "(".self::REGEX_CSS_NUM.") *, *".
+            "(".self::REGEX_CSS_NUM.")".
+            "( *[,\/] *".self::REGEX_CSS_NUM.")?".
+            "\)/i";
 
-        const REGEX_HEX_79 = (
-            "/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})?/i"
-        );
+        const REGEX_HWB =
+            "/^hwb\(".
+            "(".self::REGEX_CSS_HUE."|none) +".
+            "(".self::REGEX_CSS_NUM."|none) +".
+            "(".self::REGEX_CSS_NUM."|none)".
+            "( *\/ *".self::REGEX_CSS_NUM."|none)?".
+            "\)/i";
+
+        const REGEX_LAB =
+            "/^lab\(".
+            "(".self::REGEX_CSS_NUM."|none) +".
+            "(".self::REGEX_CSS_NUM."|none) +".
+            "(".self::REGEX_CSS_NUM."|none)".
+            "( *\/ *".self::REGEX_CSS_NUM."|none)?".
+            "\)/i";
+
+        const REGEX_LCH =
+            "/^lab\(".
+            "(".self::REGEX_CSS_NUM."|none) +".
+            "(".self::REGEX_CSS_NUM."|none) +".
+            "(".self::REGEX_CSS_HUE."|none)".
+            "( *\/ *".self::REGEX_CSS_NUM."|none)?".
+            "\)/i";
+
+        const REGEX_HEX_SHORT =
+            "/^#(".self::REGEX_CSS_HEX.")".
+            "(".self::REGEX_CSS_HEX.")".
+            "(".self::REGEX_CSS_HEX.")".
+            "(".self::REGEX_CSS_HEX.")?/i";
+
+        const REGEX_HEX_LONG =
+            "/^#(".self::REGEX_CSS_HEX."{2})".
+            "(".self::REGEX_CSS_HEX."{2})".
+            "(".self::REGEX_CSS_HEX."{2})".
+            "(".self::REGEX_CSS_HEX."{2})?/i";
 
         private $rgb = array(
             "r" => 0.0,
@@ -197,6 +245,21 @@
             "h" => 0.0,
             "w" => 0.0,
             "b" => 0.0
+        );
+        private $xyz = array(
+            "x" => 0.0,
+            "y" => 0.0,
+            "z" => 0.0
+        );
+        private $lab = array(
+            "l" => 0.0,
+            "a" => 0.0,
+            "b" => 0.0
+        );
+        private $lch = array(
+            "l" => 0.0,
+            "c" => 0.0,
+            "h" => 0.0
         );
         private $alpha = 0.0;
 
@@ -224,9 +287,9 @@
             $r = (int) round($this->rgb["r"] * 255);
             $g = (int) round($this->rgb["g"] * 255);
             $b = (int) round($this->rgb["b"] * 255);
-            $a = (int) round($this->alpha * 100);
+            $p = (int) round($this->alpha * 100);
 
-            return "rgb(".$r." ".$g." ".$b." / ".$a."%)";
+            return "rgb(".$r." ".$g." ".$b." / ".$p."%)";
         }
 
         public function hsl($str = null): string|bool {
@@ -236,9 +299,9 @@
             $h = (int) round($this->hsl["h"]);
             $s = (int) round($this->hsl["s"] * 100);
             $l = (int) round($this->hsl["l"] * 100);
-            $a = (int) round($this->alpha * 100);
+            $p = (int) round($this->alpha * 100);
 
-            return "hsl(".$h."deg ".$s."% ".$l."% / ".$a."%)";
+            return "hsl(".$h." ".$s."% ".$l."% / ".$p."%)";
         }
 
         public function hwb($str = null): string|bool {
@@ -248,9 +311,33 @@
             $h = (int) round($this->hwb["h"]);
             $w = (int) round($this->hwb["w"] * 100);
             $b = (int) round($this->hwb["b"] * 100);
-            $a = (int) round($this->alpha * 100);
+            $p = (int) round($this->alpha * 100);
 
-            return "hwb(".$h."deg ".$w."% ".$b."% / ".$a."%)";
+            return "hwb(".$h." ".$w."% ".$b."% / ".$p."%)";
+        }
+
+        public function lab($str = null): string|bool {
+            if (isset($str))
+                return $this->interpret_lab($str);
+
+            $l = (int) round($this->lab["l"]);
+            $a = (int) round($this->lab["a"]);
+            $b = (int) round($this->lab["b"]);
+            $p = (int) round($this->alpha * 100);
+
+            return "lab(".$l." ".$a." ".$b." / ".$p."%)";
+        }
+
+        public function lch($str = null): string|bool {
+            if (isset($str))
+                return $this->interpret_lch($str);
+
+            $l = (int) round($this->lch["l"]);
+            $c = (int) round($this->lch["c"]);
+            $h = (int) round($this->lch["h"]);
+            $p = (int) round($this->alpha * 100);
+
+            return "lch(".$l." ".$c." ".$h." / ".$p."%)";
         }
 
         public function hex($str = null): string|bool {
@@ -275,14 +362,14 @@
             $r = (int) round($this->rgb["r"] * 255);
             $g = (int) round($this->rgb["g"] * 255);
             $b = (int) round($this->rgb["b"] * 255);
-            $a = (int) round($this->alpha * 255);
+            $p = (int) round($this->alpha * 255);
 
             $r = str_pad(dechex($r), 2, "0", STR_PAD_LEFT);
             $g = str_pad(dechex($g), 2, "0", STR_PAD_LEFT);
             $b = str_pad(dechex($b), 2, "0", STR_PAD_LEFT);
-            $a = str_pad(dechex($a), 2, "0", STR_PAD_LEFT);
+            $p = str_pad(dechex($p), 2, "0", STR_PAD_LEFT);
 
-            return "#".$r.$g.$b.$a;
+            return "#".$r.$g.$b.$p;
         }
 
         public function red($r = null): float|bool {
@@ -295,8 +382,12 @@
                 );
 
             $this->rgb["r"] = (float) $r;
+
             $this->hsl = $this->rgb2hsl($this->rgb);
             $this->hwb = $this->rgb2hwb($this->rgb);
+            $this->xyz = $this->rgb2xyz($this->rgb);
+            $this->lab = $this->xyz2lab($this->xyz);
+            $this->lch = $this->lab2lch($this->lab);
 
             return true;
         }
@@ -311,8 +402,12 @@
                 );
 
             $this->rgb["g"] = (float) $g;
+
             $this->hsl = $this->rgb2hsl($this->rgb);
             $this->hwb = $this->rgb2hwb($this->rgb);
+            $this->xyz = $this->rgb2xyz($this->rgb);
+            $this->lab = $this->xyz2lab($this->xyz);
+            $this->lch = $this->lab2lch($this->lab);
 
             return true;
         }
@@ -327,8 +422,12 @@
                 );
 
             $this->rgb["b"] = (float) $b;
+
             $this->hsl = $this->rgb2hsl($this->rgb);
             $this->hwb = $this->rgb2hwb($this->rgb);
+            $this->xyz = $this->rgb2xyz($this->rgb);
+            $this->lab = $this->xyz2lab($this->xyz);
+            $this->lch = $this->lab2lch($this->lab);
 
             return true;
         }
@@ -349,9 +448,12 @@
                 $h = $h + 360;
 
             $this->hsl["h"] = (float) $h;
+
             $this->rgb = $this->hsl2rgb($this->hsl);
             $this->hwb = $this->rgb2hwb($this->rgb);
-
+            $this->xyz = $this->rgb2xyz($this->rgb);
+            $this->lab = $this->xyz2lab($this->xyz);
+            $this->lch = $this->lab2lch($this->lab);
             return true;
         }
 
@@ -365,8 +467,12 @@
                 );
 
             $this->hsl["s"] = (float) $s;
+
             $this->rgb = $this->hsl2rgb($this->hsl);
             $this->hwb = $this->rgb2hwb($this->rgb);
+            $this->xyz = $this->rgb2xyz($this->rgb);
+            $this->lab = $this->xyz2lab($this->xyz);
+            $this->lch = $this->lab2lch($this->lab);
 
             return true;
         }
@@ -381,8 +487,12 @@
                 );
 
             $this->hsl["l"] = (float) $l;
+
             $this->rgb = $this->hsl2rgb($this->hsl);
             $this->hwb = $this->rgb2hwb($this->rgb);
+            $this->xyz = $this->rgb2xyz($this->rgb);
+            $this->lab = $this->xyz2lab($this->xyz);
+            $this->lch = $this->lab2lch($this->lab);
 
             return true;
         }
@@ -397,8 +507,12 @@
                 );
 
             $this->hwb["w"] = (float) $w;
+
             $this->rgb = $this->hwb2rgb($this->hwb);
             $this->hsl = $this->rgb2hsl($this->rgb);
+            $this->xyz = $this->rgb2xyz($this->rgb);
+            $this->lab = $this->xyz2lab($this->xyz);
+            $this->lch = $this->lab2lch($this->lab);
 
             return true;
         }
@@ -413,9 +527,114 @@
                 );
 
             $this->hwb["b"] = (float) $d;
+
             $this->rgb = $this->hwb2rgb($this->hwb);
             $this->hsl = $this->rgb2hsl($this->rgb);
+            $this->xyz = $this->rgb2xyz($this->rgb);
+            $this->lab = $this->xyz2lab($this->xyz);
+            $this->lch = $this->lab2lch($this->lab);
 
+            return true;
+        }
+
+        public function cie_l($l = null): float|bool {
+            if (!isset($l))
+                return $this->lab["l"];
+
+            if (!is_numeric($l) or $l < 0 or $l > 100)
+                throw new \RangeException(
+                    "CIE luminance value must be in the range 0-100."
+                );
+
+            $this->lab["l"] = (float) $l;
+
+            $this->lch = $this->lab2lch($this->lab);
+            $this->xyz = $this->lab2xyz($this->lab);
+            $this->rgb = $this->xyz2rgb($this->xyz);
+            $this->hsl = $this->rgb2hsl($this->rgb);
+            $this->hwb = $this->rgb2hwb($this->rgb);
+            return true;
+        }
+
+        public function cie_a($a = null): float|bool {
+            if (!isset($a))
+                return $this->lab["a"];
+
+            if (!is_numeric($a))
+                throw new \InvalidArgumentException(
+                    "CIE A axis value must be numeric."
+                );
+
+            $this->lab["a"] = (float) $a;
+
+            $this->lch = $this->lab2lch($this->lab);
+            $this->xyz = $this->lab2xyz($this->lab);
+            $this->rgb = $this->xyz2rgb($this->xyz);
+            $this->hsl = $this->rgb2hsl($this->rgb);
+            $this->hwb = $this->rgb2hwb($this->rgb);
+            return true;
+        }
+
+        public function cie_b($b = null): float|bool {
+            if (!isset($b))
+                return $this->lab["b"];
+
+            if (!is_numeric($b))
+                throw new \InvalidArgumentException(
+                    "CIE B axis value must be numeric."
+                );
+
+            $this->lab["b"] = (float) $b;
+
+            $this->lch = $this->lab2lch($this->lab);
+            $this->xyz = $this->lab2xyz($this->lab);
+            $this->rgb = $this->xyz2rgb($this->xyz);
+            $this->hsl = $this->rgb2hsl($this->rgb);
+            $this->hwb = $this->rgb2hwb($this->rgb);
+            return true;
+        }
+
+        public function cie_c($c = null): float|bool {
+            if (!isset($c))
+                return $this->lch["c"];
+
+            if (!is_numeric($c) or $c < 0)
+                throw new \RangeException(
+                    "CIE luminance value must be greater than zero."
+                );
+
+            $this->lch["c"] = (float) $c;
+
+            $this->lab = $this->lch2lab($this->lch);
+            $this->xyz = $this->lab2xyz($this->lab);
+            $this->rgb = $this->xyz2rgb($this->xyz);
+            $this->hsl = $this->rgb2hsl($this->rgb);
+            $this->hwb = $this->rgb2hwb($this->rgb);
+            return true;
+        }
+
+        public function cie_h($h = null): float|bool {
+            if (!isset($h))
+                return $this->lch["h"];
+
+            if (!is_numeric($h))
+                throw new \InvalidArgumentException(
+                    "CIE Hue value must be numeric."
+                );
+
+            if ($h > 360)
+                $h = $h % 360;
+
+            while ($h < 0)
+                $h = $h + 360;
+
+            $this->lch["h"] = (float) $h;
+
+            $this->lab = $this->lch2lab($this->lch);
+            $this->xyz = $this->lab2xyz($this->lab);
+            $this->rgb = $this->xyz2rgb($this->xyz);
+            $this->hsl = $this->rgb2hsl($this->rgb);
+            $this->hwb = $this->rgb2hwb($this->rgb);
             return true;
         }
 
@@ -513,7 +732,7 @@
                 $n / 12.92 :
                 (($n + 0.055) / 1.055) ** 2.4 ;
 
-            $l = ((0.2126 * $r) + (0.7152 * $g) + (0.0722 * $b));
+            $l = (0.2126 * $r) + (0.7152 * $g) + (0.0722 * $b);
 
             return (float) $l;
         }
@@ -529,6 +748,16 @@
                 return (float) $str * 360;
 
             return (float) $str;
+        }
+
+        private function clamp(&$num, $min, $max): int|float {
+            if ($num < $min)
+                $num = $min;
+
+            if ($num > $max)
+                $num = $max;
+
+            return $num;
         }
 
         private function rgb2hsl($rgb): array {
@@ -573,17 +802,8 @@
             while ($h < 0)
                 $h = $h + 360;
 
-            if ($s > 1)
-                $s = 1;
-
-            if ($s < 0)
-                $s = 0;
-
-            if ($l > 1)
-                $l = 1;
-
-            if ($l < 0)
-                $l = 0;
+            $this->clamp($s, 0.0, 1.0);
+            $this->clamp($l, 0.0, 1.0);
 
             return array(
                 "h" => (float) $h,
@@ -607,23 +827,9 @@
             $g = $this->hue2rgb($m1, $m2, $h);
             $b = $this->hue2rgb($m1, $m2, $h - (1 / 3));
 
-            if ($r > 1)
-                $r = 1;
-
-            if ($r < 0)
-                $r = 0;
-
-            if ($g > 1)
-                $g = 1;
-
-            if ($g < 0)
-                $g = 0;
-
-            if ($b > 1)
-                $b = 1;
-
-            if ($b < 0)
-                $b = 0;
+            $this->clamp($r, 0.0, 1.0);
+            $this->clamp($g, 0.0, 1.0);
+            $this->clamp($b, 0.0, 1.0);
 
             return array(
                 "r" => (float) $r,
@@ -639,17 +845,8 @@
             $w = min($r, $g, $b);
             $d = 1 - max($r, $g, $b);
 
-            if ($w > 1)
-                $w = 1;
-
-            if ($w < 0)
-                $w = 0;
-
-            if ($b > 1)
-                $b = 1;
-
-            if ($b < 0)
-                $b = 0;
+            $this->clamp($w, 0.0, 1.0);
+            $this->clamp($b, 0.0, 1.0);
 
             return array(
                 "h" => $this->rgb2hsl($rgb)["h"],
@@ -676,27 +873,168 @@
                 $b = ($rgb["b"] * ((1 - $w) - $d)) + $w;
             }
 
-            if ($r > 1)
-                $r = 1;
-
-            if ($r < 0)
-                $r = 0;
-
-            if ($g > 1)
-                $g = 1;
-
-            if ($g < 0)
-                $g = 0;
-
-            if ($b > 1)
-                $b = 1;
-
-            if ($b < 0)
-                $b = 0;
+            $this->clamp($r, 0.0, 1.0);
+            $this->clamp($g, 0.0, 1.0);
+            $this->clamp($b, 0.0, 1.0);
 
             return array(
                 "r" => (float) $r,
                 "g" => (float) $g,
+                "b" => (float) $b
+            );
+        }
+
+        private function rgb2xyz($rgb): array {
+            $r = $rgb["r"];
+            $g = $rgb["g"];
+            $b = $rgb["b"];
+
+            $r = ($r > 0.04045) ?
+                (($r + 0.055) / 1.055) ** 2.4 :
+                $r / 12.92 ;
+
+            $g = ($g > 0.04045) ?
+                (($g + 0.055) / 1.055) ** 2.4 :
+                $g / 12.92 ;
+
+            $b = ($b > 0.04045) ?
+                (($b + 0.055) / 1.055) ** 2.4 :
+                $b / 12.92 ;
+
+            $r = $r * 100;
+            $g = $g * 100;
+            $b = $b * 100;
+
+            $x = ($r * 0.4124) + ($g * 0.3576) + ($b * 0.1805);
+            $y = ($r * 0.2126) + ($g * 0.7152) + ($b * 0.0722);
+            $z = ($r * 0.0193) + ($g * 0.1192) + ($b * 0.9505);
+
+            return array(
+                "x" => (float) $x,
+                "y" => (float) $y,
+                "z" => (float) $z
+            );
+        }
+
+        private function xyz2rgb($xyz): array {
+            $x = $xyz["x"] / 100;
+            $y = $xyz["y"] / 100;
+            $z = $xyz["z"] / 100;
+
+            $r = ($x *  3.2406) + ($y * -1.5372) + ($z * -0.4986);
+            $g = ($x * -0.9689) + ($y *  1.8758) + ($z *  0.0415);
+            $b = ($x *  0.0557) + ($y * -0.2040) + ($z *  1.0570);
+
+            $r = ($r > 0.0031308) ?
+                (1.055 * ($r ** (1 / 2.4))) - 0.055 :
+                12.92 * $r;
+
+            $g = ($g > 0.0031308) ?
+                (1.055 * ($g ** (1 / 2.4))) - 0.055 :
+                12.92 * $g;
+
+            $b = ($b > 0.0031308) ?
+                (1.055 * ($b ** (1 / 2.4))) - 0.055 :
+                12.92 * $b;
+
+            return array(
+                "r" => (float) $r,
+                "g" => (float) $g,
+                "b" => (float) $b
+            );
+        }
+
+        private function xyz2lab($xyz): array {
+            $x = $xyz["x"] / self::TRISTIMULUS_D65_2DEG_X;
+            $y = $xyz["y"] / self::TRISTIMULUS_D65_2DEG_Y;
+            $z = $xyz["z"] / self::TRISTIMULUS_D65_2DEG_Z;
+
+            $x = ($x > 0.008856) ?
+                $x ** (1 / 3) :
+                (7.787 * $x) + (16 / 116) ;
+
+            $y = ($y > 0.008856) ?
+                $y ** (1 / 3) :
+                (7.787 * $y) + (16 / 116) ;
+
+            $z = ($z > 0.008856) ?
+                $z ** (1 / 3) :
+                (7.787 * $z) + (16 / 116) ;
+
+            $l = (116 * $y) - 16;
+            $a = 500 * ($x - $y);
+            $b = 200 * ($y - $z);
+
+            return array(
+                "l" => (float) $l,
+                "a" => (float) $a,
+                "b" => (float) $b
+            );
+        }
+
+        private function lab2xyz($lab): array {
+            $l = $lab["l"];
+            $a = $lab["a"];
+            $b = $lab["b"];
+
+            $y = ($l + 16) / 116;
+            $x = ($a / 500) + $y;
+            $z = $y - ($b / 200);
+
+            $y = ($y ** 3 > 0.008856) ?
+                $y ** 3 :
+                ($y - (16 / 116)) / 7.787 ;
+
+            $x = ($x ** 3 > 0.008856) ?
+                $x ** 3 :
+                ($x - (16 / 116)) / 7.787 ;
+
+            $z = ($z ** 3 > 0.008856) ?
+                $z ** 3 :
+                ($z - (16 / 116)) / 7.787 ;
+
+            $x = $x * self::TRISTIMULUS_D65_2DEG_X;
+            $y = $y * self::TRISTIMULUS_D65_2DEG_Y;
+            $z = $z * self::TRISTIMULUS_D65_2DEG_Z;
+
+            return array(
+                "x" => (float) $x,
+                "y" => (float) $y,
+                "z" => (float) $z
+            );
+        }
+
+        private function lab2lch($lab): array {
+            $l = $lab["l"];
+            $a = $lab["a"];
+            $b = $lab["b"];
+
+            $h = atan2($b, $a);
+
+            $h = ($h > 0) ?
+                ($h / M_PI) * 180 :
+                360 - (abs($h) / M_PI) * 180 ;
+
+            $c = sqrt(($a ** 2) + ($b ** 2));
+
+            return array(
+                "l" => (float) $l,
+                "c" => (float) $c,
+                "h" => (float) $h
+            );
+        }
+
+        private function lch2lab($lch): array {
+            $l = $lch["l"];
+            $c = $lch["c"];
+            $h = $lch["h"];
+
+            $a = cos(deg2rad($h)) * $c;
+            $b = sin(deg2rad($h)) * $c;
+
+            return array(
+                "l" => (float) $l,
+                "a" => (float) $a,
                 "b" => (float) $b
             );
         }
@@ -799,11 +1137,10 @@
                 }
             }
 
-            if ($r < 0 or $g < 0 or $b < 0 or $a < 0)
-                return false;
-
-            if ($r > 1 or $g > 1 or $b > 1 or $a > 1)
-                return false;
+            $this->clamp($r, 0.0, 1.0);
+            $this->clamp($g, 0.0, 1.0);
+            $this->clamp($b, 0.0, 1.0);
+            $this->clamp($a, 0.0, 1.0);
 
             $this->red($r);
             $this->green($g);
@@ -847,11 +1184,9 @@
                 }
             }
 
-            if ($s < 0 or $l < 0 or $a < 0)
-                return false;
-
-            if ($s > 1 or $l > 1 or $a > 1)
-                return false;
+            $this->clamp($s, 0.0, 1.0);
+            $this->clamp($l, 0.0, 1.0);
+            $this->clamp($a, 0.0, 1.0);
 
             $this->hue($h);
             $this->saturation($s);
@@ -892,11 +1227,9 @@
                 }
             }
 
-            if ($w < 0 or $d < 0 or $a < 0)
-                return false;
-
-            if ($w > 1 or $d > 1 or $a > 1)
-                return false;
+            $this->clamp($w, 0.0, 1.0);
+            $this->clamp($d, 0.0, 1.0);
+            $this->clamp($a, 0.0, 1.0);
 
             $this->hue($h);
             $this->whiteness($w);
@@ -906,17 +1239,111 @@
             return true; 
         }
 
+        private function interpret_lab($str): bool {
+            if (!preg_match(self::REGEX_LAB, $str, $lab))
+                return false;
+
+            $p = 1.0;
+
+            for ($i = 1; $i < count($lab) ; $i++) { 
+                $val = trim($lab[$i], ", /");
+
+                if (strtolower($val) == "none")
+                    $val = 0;
+
+                switch ($i) {
+                    case 1:
+                        $l = (float) $val;
+                        break;
+                    case 2:
+                        $a = strpos($val, "%") ?
+                            (float) $val * 1.25 :
+                            (float) $val ;
+
+                        break;
+                    case 3:
+                        $b = strpos($val, "%") ?
+                            (float) $val * 1.25 :
+                            (float) $val ;
+
+                        break;
+                    case 4:
+                        $p = strpos($val, "%") ?
+                            (float) $val / 100 :
+                            (float) $val ;
+
+                        break;
+                }
+            }
+
+            $this->clamp($l, 0.0, 100);
+            $this->clamp($p, 0.0, 1.0);
+
+            $this->cie_l($l);
+            $this->cie_a($a);
+            $this->cie_b($b);
+            $this->alpha($p);
+
+            return true; 
+        }
+
+        private function interpret_lch($str): bool {
+            if (!preg_match(self::REGEX_LCH, $str, $lch))
+                return false;
+
+            $p = 1.0;
+
+            for ($i = 1; $i < count($lch) ; $i++) { 
+                $val = trim($lch[$i], ", /");
+
+                if (strtolower($val) == "none")
+                    $val = 0;
+
+                switch ($i) {
+                    case 1:
+                        $l = (float) $val;
+                        break;
+                    case 2:
+                        $a = strpos($val, "%") ?
+                            (float) $val * 1.50 :
+                            (float) $val ;
+
+                        break;
+                    case 3:
+                        $b = $this->deg($val);
+                        break;
+                    case 4:
+                        $p = strpos($val, "%") ?
+                            (float) $val / 100 :
+                            (float) $val ;
+
+                        break;
+                }
+            }
+
+            $this->clamp($l, 0.0, 100);
+            $this->clamp($c, 0.0, INF);
+            $this->clamp($p, 0.0, 1.0);
+
+            $this->cie_l($l);
+            $this->cie_c($c);
+            $this->cie_h($h);
+            $this->alpha($p);
+
+            return true; 
+        }
+
         private function interpret_hex($str): bool {
             switch (strlen($str)) {
                 case 4:
                 case 5:
-                    if (!preg_match(self::REGEX_HEX_45, $str, $hex))
+                    if (!preg_match(self::REGEX_HEX_SHORT, $str, $hex))
                         return false;
                     else
                         break;
                 case 7:
                 case 9:
-                    if (!preg_match(self::REGEX_HEX_79, $str, $hex))
+                    if (!preg_match(self::REGEX_HEX_LONG, $str, $hex))
                         return false;
                     else
                         break;
@@ -948,11 +1375,10 @@
                 }
             }
 
-            if ($r < 0 or $g < 0 or $b < 0 or $a < 0)
-                return false;
-
-            if ($r > 1 or $g > 1 or $b > 1 or $a > 1)
-                return false;
+            $this->clamp($r, 0.0, 1.0);
+            $this->clamp($g, 0.0, 1.0);
+            $this->clamp($b, 0.0, 1.0);
+            $this->clamp($a, 0.0, 1.0);
 
             $this->red($r);
             $this->green($g);
