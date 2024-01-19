@@ -159,8 +159,8 @@
         const TRISTIMULUS_D65_2DEG_Y         = 100;
         const TRISTIMULUS_D65_2DEG_Z         = 108.883;
 
-        const REGEX_CSS_NUM                  = "-?[\.0-9]+%?";
-        const REGEX_CSS_HUE                  = "-?[\.0-9]+[a-z]*";
+        const REGEX_CSS_NUM                  = "[-\+]?[\.0-9]+%?";
+        const REGEX_CSS_HUE                  = "[-\+]?[\.0-9]+[a-z]*";
         const REGEX_CSS_HEX                  = "[0-9a-f]";
 
         const REGEX_RGB =
@@ -177,7 +177,7 @@
             "(".self::REGEX_CSS_NUM.") *, *".
             "(".self::REGEX_CSS_NUM.")".
             "( *[,\/] *".self::REGEX_CSS_NUM.")?".
-            "\)/i";
+            "\)$/i";
 
         const REGEX_HSL =
             "/^hsla?\(".
@@ -185,7 +185,7 @@
             "(".self::REGEX_CSS_NUM."|none) +".
             "(".self::REGEX_CSS_NUM."|none)".
             "( *\/ *".self::REGEX_CSS_NUM."|none)?".
-            "\)/i";
+            "\)$/i";
 
         const REGEX_HSL_LEGACY =
             "/^hsla?\(".
@@ -193,7 +193,7 @@
             "(".self::REGEX_CSS_NUM.") *, *".
             "(".self::REGEX_CSS_NUM.")".
             "( *[,\/] *".self::REGEX_CSS_NUM.")?".
-            "\)/i";
+            "\)$/i";
 
         const REGEX_HWB =
             "/^hwb\(".
@@ -201,7 +201,7 @@
             "(".self::REGEX_CSS_NUM."|none) +".
             "(".self::REGEX_CSS_NUM."|none)".
             "( *\/ *".self::REGEX_CSS_NUM."|none)?".
-            "\)/i";
+            "\)$/i";
 
         const REGEX_LAB =
             "/^lab\(".
@@ -209,7 +209,7 @@
             "(".self::REGEX_CSS_NUM."|none) +".
             "(".self::REGEX_CSS_NUM."|none)".
             "( *\/ *".self::REGEX_CSS_NUM."|none)?".
-            "\)/i";
+            "\)$/i";
 
         const REGEX_LCH =
             "/^lab\(".
@@ -217,19 +217,23 @@
             "(".self::REGEX_CSS_NUM."|none) +".
             "(".self::REGEX_CSS_HUE."|none)".
             "( *\/ *".self::REGEX_CSS_NUM."|none)?".
-            "\)/i";
+            "\)$/i";
 
         const REGEX_HEX_SHORT =
-            "/^#(".self::REGEX_CSS_HEX.")".
+            "/^#".
             "(".self::REGEX_CSS_HEX.")".
             "(".self::REGEX_CSS_HEX.")".
-            "(".self::REGEX_CSS_HEX.")?/i";
+            "(".self::REGEX_CSS_HEX.")".
+            "(".self::REGEX_CSS_HEX.")?".
+            "$/i";
 
         const REGEX_HEX_LONG =
-            "/^#(".self::REGEX_CSS_HEX."{2})".
+            "/^#".
             "(".self::REGEX_CSS_HEX."{2})".
             "(".self::REGEX_CSS_HEX."{2})".
-            "(".self::REGEX_CSS_HEX."{2})?/i";
+            "(".self::REGEX_CSS_HEX."{2})".
+            "(".self::REGEX_CSS_HEX."{2})?".
+            "$/i";
 
         private $rgb = array(
             "r" => 0.0,
@@ -284,9 +288,9 @@
             if (isset($str))
                 return $this->interpret_rgb($str);
 
-            $r = (int) round($this->rgb["r"] * 255);
-            $g = (int) round($this->rgb["g"] * 255);
-            $b = (int) round($this->rgb["b"] * 255);
+            $r = $this->number_format($this->rgb["r"] * 255);
+            $g = $this->number_format($this->rgb["g"] * 255);
+            $b = $this->number_format($this->rgb["b"] * 255);
             $p = (int) round($this->alpha * 100);
 
             return "rgb(".$r." ".$g." ".$b." / ".$p."%)";
@@ -296,9 +300,9 @@
             if (isset($str))
                 return $this->interpret_hsl($str);
 
-            $h = (int) round($this->hsl["h"]);
-            $s = (int) round($this->hsl["s"] * 100);
-            $l = (int) round($this->hsl["l"] * 100);
+            $h = $this->number_format($this->hsl["h"]);
+            $s = $this->number_format($this->hsl["s"] * 100);
+            $l = $this->number_format($this->hsl["l"] * 100);
             $p = (int) round($this->alpha * 100);
 
             return "hsl(".$h." ".$s."% ".$l."% / ".$p."%)";
@@ -308,9 +312,9 @@
             if (isset($str))
                 return $this->interpret_hwb($str);
 
-            $h = (int) round($this->hwb["h"]);
-            $w = (int) round($this->hwb["w"] * 100);
-            $b = (int) round($this->hwb["b"] * 100);
+            $h = $this->number_format($this->hwb["h"]);
+            $w = $this->number_format($this->hwb["w"] * 100);
+            $b = $this->number_format($this->hwb["b"] * 100);
             $p = (int) round($this->alpha * 100);
 
             return "hwb(".$h." ".$w."% ".$b."% / ".$p."%)";
@@ -320,9 +324,9 @@
             if (isset($str))
                 return $this->interpret_lab($str);
 
-            $l = (int) round($this->lab["l"]);
-            $a = (int) round($this->lab["a"]);
-            $b = (int) round($this->lab["b"]);
+            $l = $this->number_format($this->lab["l"]);
+            $a = $this->number_format($this->lab["a"]);
+            $b = $this->number_format($this->lab["b"]);
             $p = (int) round($this->alpha * 100);
 
             return "lab(".$l." ".$a." ".$b." / ".$p."%)";
@@ -332,9 +336,9 @@
             if (isset($str))
                 return $this->interpret_lch($str);
 
-            $l = (int) round($this->lch["l"]);
-            $c = (int) round($this->lch["c"]);
-            $h = (int) round($this->lch["h"]);
+            $l = $this->number_format($this->lch["l"]);
+            $c = $this->number_format($this->lch["c"]);
+            $h = $this->number_format($this->lch["h"]);
             $p = (int) round($this->alpha * 100);
 
             return "lch(".$l." ".$c." ".$h." / ".$p."%)";
@@ -600,7 +604,7 @@
 
             if (!is_numeric($c) or $c < 0)
                 throw new \RangeException(
-                    "CIE luminance value must be greater than zero."
+                    "CIE luminance value must be > 0."
                 );
 
             $this->lch["c"] = (float) $c;
@@ -676,20 +680,6 @@
             return false;
         }
 
-        public function keywords(): array {
-            $keywords = array();
-
-            $reflect = new \ReflectionClass(get_class($this));
-            $constants = $reflect->getConstants();
-
-            foreach ($constants as $key => $val) {
-                if (preg_match("/^CSS_COLOR_/", $key))
-                    $keywords[strtolower(substr($key, 10))] = $val;
-            }
-
-            return $keywords;
-        }
-
         public static function contrast($color1, $color2): float {
             if (!$color1 instanceof color2css)
                 throw new \InvalidArgumentException(
@@ -758,6 +748,16 @@
                 $num = $max;
 
             return $num;
+        }
+
+        private function number_format($num, $decimals = 1): string {
+            $str = number_format($num, $decimals, ".", "");
+            $offset = (0 - $decimals);
+
+            if (substr($str, $offset) === "0")
+                $str = substr($str, 0, ($offset - 1));
+
+            return $str;
         }
 
         private function rgb2hsl($rgb): array {
@@ -937,6 +937,10 @@
                 (1.055 * ($b ** (1 / 2.4))) - 0.055 :
                 12.92 * $b;
 
+            $this->clamp($r, 0.0, 1.0);
+            $this->clamp($g, 0.0, 1.0);
+            $this->clamp($b, 0.0, 1.0);
+
             return array(
                 "r" => (float) $r,
                 "g" => (float) $g,
@@ -964,6 +968,8 @@
             $l = (116 * $y) - 16;
             $a = 500 * ($x - $y);
             $b = 200 * ($y - $z);
+
+            $this->clamp($l, 0.0, 100);
 
             return array(
                 "l" => (float) $l,
@@ -1017,6 +1023,9 @@
 
             $c = sqrt(($a ** 2) + ($b ** 2));
 
+            $this->clamp($l, 0.0, 100);
+            $this->clamp($c, 0.0, INF);
+
             return array(
                 "l" => (float) $l,
                 "c" => (float) $c,
@@ -1031,6 +1040,8 @@
 
             $a = cos(deg2rad($h)) * $c;
             $b = sin(deg2rad($h)) * $c;
+
+            $this->clamp($l, 0.0, 100);
 
             return array(
                 "l" => (float) $l,
@@ -1395,5 +1406,19 @@
                 return $this->interpret_hex(constant($const));
 
             return false;
+        }
+
+        public function keywords(): array {
+            $keywords = array();
+
+            $reflect = new \ReflectionClass(get_class($this));
+            $constants = $reflect->getConstants();
+
+            foreach ($constants as $key => $val) {
+                if (preg_match("/^CSS_COLOR_/", $key))
+                    $keywords[strtolower(substr($key, 10))] = $val;
+            }
+
+            return $keywords;
         }
     }
