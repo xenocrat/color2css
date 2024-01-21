@@ -15,12 +15,14 @@ Define the CSS color `rebeccapurple` using various methods:
     $color2css = new color2css("#663399");
     $color2css = new color2css("rgb(102, 51, 153)");
     $color2css = new color2css("rgba(102 51 153 / 1.0)");
-    $color2css = new color2css("hsl(270 50% 40%)");
+    $color2css = new color2css("hsl(270 50% 40% / 1.0)");
     $color2css = new color2css("hsla(270, 50%, 40%, 100%)");
     $color2css = new color2css("hwb(270 20% 40% / 1)");
+    $color2css = new color2css("lab(32.9 42.9 -47.2)");
+    $color2css = new color2css("lch(32.9 63.7 312.3 / 100%)");
     $color2css = new color2css(0.4, 0.2, 0.6, 1.0);
 
-Interpret a CSS color definition, with clamped out-of-range values:
+Interpret a CSS color definition, with clamping for out-of-range values:
 
     $color2css->hex("#6633GG");             // returns false
     $color2css->hex("#663399");             // returns true
@@ -36,17 +38,17 @@ Interpret a CSS color definition, with clamped out-of-range values:
     $color2css->keyword("rebeccapurple");   // returns true
     $color2css->keyword("undefinedcolor");  // returns false
 
-Adjust the RGB values of a color, in the range 0-1:
+Adjust the RGB of a color, in the range 0-1:
 
     $color2css->red(1.0);
     $color2css->green(0.388);
     $color2css->blue(0.278);
 
-Adjust the hue values of a color, in the range 0-360:
+Adjust the hue of a color, in the range 0-360:
 
     $color2css->hue(9);
 
-Adjust the saturation and lightness of a clor, in the range 0-1:
+Adjust the saturation and lightness of a color, in the range 0-1:
 
     $color2css->saturation(1.0);
     $color2css->lightness(0.64);
@@ -55,6 +57,23 @@ Adjust the whiteness and blackness of a color, in the range 0-1:
 
     $color2css->whiteness(0.28);
     $color2css->blackness(0);
+
+Adjust the CIE lightness of a color, in the range 0-100:
+
+    $color2css->cie_l(0);
+
+Adjust the CIE Lab A and B axes of a color:
+
+    $color2css->cie_a(0.5);
+    $color2css->cie_b(0.7);
+
+Adjust the CIE LCH chroma of a color, with a value > 0:
+
+    $color2css->cie_c(160);
+
+Adjust the CIE LCH hue value of a color, in the range 0-360:
+
+    $color2css->cie_h(95);
 
 Adjust the alpha value of a color:
 
