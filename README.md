@@ -14,40 +14,43 @@ Define the CSS color `rebeccapurple` using various methods:
     $color2css = new color2css("rebeccapurple");
     $color2css = new color2css("#663399");
     $color2css = new color2css("rgb(102, 51, 153)");
-    $color2css = new color2css("rgba(102, 51, 153, 1.0)");
-    $color2css = new color2css("hsl(270, 50%, 40%)");
+    $color2css = new color2css("rgba(102 51 153 / 1.0)");
+    $color2css = new color2css("hsl(270 50% 40%)");
     $color2css = new color2css("hsla(270, 50%, 40%, 100%)");
     $color2css = new color2css("hwb(270 20% 40% / 1)");
     $color2css = new color2css(0.4, 0.2, 0.6, 1.0);
 
-Interpret a CSS color definition:
+Interpret a CSS color definition. Out of range values are clamped. However, noticeably malformed values will return `false`:
 
-    $color2css->hex("#663399");              // returns true
-    $color2css->hex("#6633GG");              // returns false
-    $color2css->rgb("rgb(102, 51, 153)");    // returns true
-    $color2css->rgb("rgb(256, 51, 153)");    // returns false
-    $color2css->rgb("rgb(40%, 20%, 60%)");   // returns true
-    $color2css->rgb("rgb(0.4, 0.2, 0.6)");   // returns false
-    $color2css->hsl("hsl(270, 50%, 40%)");   // returns true
-    $color2css->hsl("hsl(270, 200%, 3%)");   // returns false
-    $color2css->hwb("hwb(480 20% 40% / 1)")  // returns true
-    $color2css->hwb("hwb(270 200% 4% / 1)")  // returns false
-    $color2css->keyword("rebeccapurple");    // returns true
-    $color2css->keyword("undefinedcolor");   // returns false
+    $color2css->hex("#6633GG");             // returns false
+    $color2css->hex("#663399");             // returns true
+    $color2css->rgb("rgb(102, 51, 153)");   // returns true
+    $color2css->rgb("rgb(256, 51, 153)");   // returns true
+    $color2css->rgb("rgb(40%, 20%, 60%)");  // returns true
+    $color2css->rgb("rgb(0.4, 0.2, 0.6)");  // returns true
+    $color2css->hsl("hsl(270, 50%, 40%)");  // returns true
+    $color2css->hsl("hsl(270, 200%, 3%)");  // returns true
+    $color2css->hwb("hwb(480 20% 40% / 1)") // returns true
+    $color2css->hwb("hwb(270 200% 4% / 1)") // returns true
+    $color2css->keyword("rebeccapurple");   // returns true
+    $color2css->keyword("undefinedcolor");  // returns false
 
-Adjust the RGB values of a color:
+Adjust the RGB values of a color, in the range 0-1:
 
     $color2css->red(1.0);
     $color2css->green(0.388);
     $color2css->blue(0.278);
 
-Adjust the HSL values of a color:
+Adjust the hue values of a color, in the range 0-360:
 
     $color2css->hue(9);
+
+Adjust the saturation and lightness of a clor, in the range 0-1:
+
     $color2css->saturation(1.0);
     $color2css->lightness(0.64);
 
-Adjust the whiteness and blackness of a color:
+Adjust the whiteness and blackness of a color, in the range 0-1:
 
     $color2css->whiteness(0.28);
     $color2css->blackness(0);
@@ -59,12 +62,15 @@ Adjust the alpha value of a color:
 
 Export a CSS color definition:
 
-    $color2css->hex();     // returns "#ff6347"
-    $color2css->hexa();    // returns "#ff6347ff"
-    $color2css->rgb();     // returns "rgb(255 99 71 / 100%)"
-    $color2css->hsl();     // returns "hsl(9deg 100% 64% / 100%)"
-    $color2css->hwb();     // returns "hwb(9deg 28% 0% / 100%)"
-    $color2css->keyword(); // returns "tomato";
+    $color2ccc->keyword("tomato");
+    $color2css->hex();                      // returns "#ff6347"
+    $color2css->hexa();                     // returns "#ff6347ff"
+    $color2css->rgb();                      // returns "rgb(255 99 71 / 100%)"
+    $color2css->hsl();                      // returns "hsl(9.1 100% 63.9% / 100%)"
+    $color2css->hwb();                      // returns "hwb(9.1 27.9% 0% / 100%)"
+    $color2css->lab();                      // returns "lab(62.2 57.9 46.4 / 100%)"
+    $color2css->lch();                      // returns "lch(62.2 74.2 38.7 / 100%)"
+    $color2css->keyword();                  // returns "tomato";
 
 Calculate WCAG contrast ratio as a float value between 1 and 21:
 
