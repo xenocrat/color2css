@@ -215,7 +215,7 @@
             " *\)$/";
 
         const REGEX_LCH =
-            "/^lab\( *".
+            "/^lch\( *".
             "(".self::REGEX_NUM."%?|".self::REGEX_EXP."%?|none) +".
             "(".self::REGEX_NUM."%?|".self::REGEX_EXP."%?|none) +".
             "(".self::REGEX_NUM_HUE."|".self::REGEX_EXP_HUE."|none)".
@@ -538,7 +538,7 @@
 
             if (!is_numeric($l) or $l < 0 or $l > 100)
                 throw new \RangeException(
-                    "CIE luminance value must be in the range 0-100."
+                    "CIE lightness value must be in the range 0-100."
                 );
 
             $this->lab["l"] = (float) $l;
@@ -595,7 +595,7 @@
 
             if (!is_numeric($c) or $c < 0)
                 throw new \RangeException(
-                    "CIE luminance value must be > 0."
+                    "CIE chroma value must be > 0."
                 );
 
             $this->lch["c"] = (float) $c;
@@ -614,7 +614,7 @@
 
             if (!is_numeric($h))
                 throw new \InvalidArgumentException(
-                    "CIE Hue value must be numeric."
+                    "CIE hue value must be numeric."
                 );
 
             if ($h > 360)
@@ -1142,6 +1142,16 @@
 
             if (preg_match("/^hwb\(/", $color)) {
                 if ($this->interpret_hwb($color))
+                    return;
+            }
+
+            if (preg_match("/^lab\(/", $color)) {
+                if ($this->interpret_lab($color))
+                    return;
+            }
+
+            if (preg_match("/^lch\(/", $color)) {
+                if ($this->interpret_lch($color))
                     return;
             }
 
