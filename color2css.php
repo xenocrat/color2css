@@ -238,32 +238,32 @@
             "(".self::REGEX_HEX."{2})?".
             "$/";
 
-        private $rgb = array(
+        protected $rgb = array(
             "r" => 0.0,
             "g" => 0.0,
             "b" => 0.0
         );
-        private $hsl = array(
+        protected $hsl = array(
             "h" => 0.0,
             "s" => 0.0,
             "l" => 0.0
         );
-        private $hwb = array(
+        protected $hwb = array(
             "h" => 0.0,
             "w" => 0.0,
             "b" => 0.0
         );
-        private $lab = array(
+        protected $lab = array(
             "l" => 0.0,
             "a" => 0.0,
             "b" => 0.0
         );
-        private $lch = array(
+        protected $lch = array(
             "l" => 0.0,
             "c" => 0.0,
             "h" => 0.0
         );
-        private $alpha = 0.0;
+        protected $alpha = 0.0;
 
         public function __construct($color = "transparent") {
             $args = func_get_args();
@@ -718,7 +718,7 @@
             return (float) $l;
         }
 
-        private function deg($str): float {
+        protected function deg($str): float {
             if (preg_match("/grad$/i", $str))
                 return (float) $str * 0.9;
 
@@ -731,7 +731,7 @@
             return (float) $str;
         }
 
-        private function clamp($num, $min, $max): int|float {
+        protected function clamp($num, $min, $max): int|float {
             if ($num < $min)
                 $num = $min;
 
@@ -741,36 +741,36 @@
             return $num;
         }
 
-        private function number_format($num, $decimals = 1): string {
+        protected function number_format($num, $decimals = 1): string {
             $str = number_format($num, $decimals, ".", "");
             return preg_replace("/\.0+$/", "", $str);
         }
 
-        private function hsl2hwb($hsl): array {
+        protected function hsl2hwb($hsl): array {
             $hsv = $this->hsl2hsv($hsl);
             $hwb = $this->hsv2hwb($hsv);
             return $hwb;
         }
 
-        private function hwb2hsl($hwb): array {
+        protected function hwb2hsl($hwb): array {
             $hsv = $this->hwb2hsv($hwb);
             $hsl = $this->hsv2hsl($hsv);
             return $hsl;
         }
 
-        private function lab2rgb($lab): array {
+        protected function lab2rgb($lab): array {
             $xyz = $this->lab2xyz($lab);
             $rgb = $this->xyz2rgb($xyz);
             return $rgb;
         }
 
-        private function rgb2lab($rgb): array {
+        protected function rgb2lab($rgb): array {
             $xyz = $this->rgb2xyz($rgb);
             $lab = $this->xyz2lab($xyz);
             return $lab;
         }
 
-        private function hue2rgb($m1, $m2, $h): float {
+        protected function hue2rgb($m1, $m2, $h): float {
             if ($h < 0)
                 $h = $h + 1;
 
@@ -789,7 +789,7 @@
             return $m1;
         }
 
-        private function rgb2hsl($rgb): array {
+        protected function rgb2hsl($rgb): array {
             $r = $rgb["r"];
             $g = $rgb["g"];
             $b = $rgb["b"];
@@ -838,7 +838,7 @@
             );
         }
 
-        private function hsl2rgb($hsl): array {
+        protected function hsl2rgb($hsl): array {
             $h = $hsl["h"] / 360;
             $s = $hsl["s"];
             $l = $hsl["l"];
@@ -860,7 +860,7 @@
             );
         }
 
-        private function hsl2hsv($hsl): array {
+        protected function hsl2hsv($hsl): array {
             $h = $hsl["h"];
             $s = $hsl["s"];
             $l = $hsl["l"];
@@ -878,7 +878,7 @@
             );
         }
 
-        private function hsv2hsl($hsv): array {
+        protected function hsv2hsl($hsv): array {
             $h = $hsv["h"];
             $s = $hsv["s"];
             $v = $hsv["v"];
@@ -896,7 +896,7 @@
             );
         }
 
-        private function hsv2hwb($hsv): array {
+        protected function hsv2hwb($hsv): array {
             $h = $hsv["h"];
             $s = $hsv["s"];
             $v = $hsv["v"];
@@ -911,7 +911,7 @@
             );
         }
 
-        private function hwb2hsv($hwb): array {
+        protected function hwb2hsv($hwb): array {
             $h = $hwb["h"];
             $w = $hwb["w"];
             $b = $hwb["b"];
@@ -926,7 +926,7 @@
             );
         }
 
-        private function rgb2hwb($rgb): array {
+        protected function rgb2hwb($rgb): array {
             $r = $rgb["r"];
             $g = $rgb["g"];
             $b = $rgb["b"];
@@ -940,7 +940,7 @@
             );
         }
 
-        private function hwb2rgb($hwb): array {
+        protected function hwb2rgb($hwb): array {
             $h = $hwb["h"];
             $w = $hwb["w"];
             $d = $hwb["b"];
@@ -969,7 +969,7 @@
             );
         }
 
-        private function rgb2xyz($rgb): array {
+        protected function rgb2xyz($rgb): array {
             $r = $rgb["r"];
             $g = $rgb["g"];
             $b = $rgb["b"];
@@ -1001,7 +1001,7 @@
             );
         }
 
-        private function xyz2rgb($xyz): array {
+        protected function xyz2rgb($xyz): array {
             $x = $xyz["x"] / 100;
             $y = $xyz["y"] / 100;
             $z = $xyz["z"] / 100;
@@ -1029,7 +1029,7 @@
             );
         }
 
-        private function xyz2lab($xyz): array {
+        protected function xyz2lab($xyz): array {
             $x = $xyz["x"] / self::TRISTIMULUS_D65_2DEG_X;
             $y = $xyz["y"] / self::TRISTIMULUS_D65_2DEG_Y;
             $z = $xyz["z"] / self::TRISTIMULUS_D65_2DEG_Z;
@@ -1057,7 +1057,7 @@
             );
         }
 
-        private function lab2xyz($lab): array {
+        protected function lab2xyz($lab): array {
             $l = $lab["l"];
             $a = $lab["a"];
             $b = $lab["b"];
@@ -1089,7 +1089,7 @@
             );
         }
 
-        private function lab2lch($lab): array {
+        protected function lab2lch($lab): array {
             $l = $lab["l"];
             $a = $lab["a"];
             $b = $lab["b"];
@@ -1109,7 +1109,7 @@
             );
         }
 
-        private function lch2lab($lch): array {
+        protected function lch2lab($lch): array {
             $l = $lch["l"];
             $c = $lch["c"];
             $h = $lch["h"];
@@ -1124,7 +1124,7 @@
             );
         }
 
-        private function interpret($color): void {
+        protected function interpret($color): void {
             if (!is_string($color))
                 throw new \InvalidArgumentException(
                     "Expected string in call to color constructor."
@@ -1160,7 +1160,7 @@
             );
         }
 
-        private function interpret_rgb($str): bool {
+        protected function interpret_rgb($str): bool {
             if (
                 !preg_match(self::REGEX_RGB, $str, $rgb) and
                 !preg_match(self::REGEX_RGB_LEGACY, $str, $rgb)
@@ -1219,7 +1219,7 @@
             return true; 
         }
 
-        private function interpret_hsl($str): bool {
+        protected function interpret_hsl($str): bool {
             if (
                 !preg_match(self::REGEX_HSL, $str, $hsl) and
                 !preg_match(self::REGEX_HSL_LEGACY, $str, $hsl)
@@ -1269,7 +1269,7 @@
             return true; 
         }
 
-        private function interpret_hwb($str): bool {
+        protected function interpret_hwb($str): bool {
             if (!preg_match(self::REGEX_HWB, $str, $hwb))
                 return false;
 
@@ -1316,7 +1316,7 @@
             return true; 
         }
 
-        private function interpret_lab($str): bool {
+        protected function interpret_lab($str): bool {
             if (!preg_match(self::REGEX_LAB, $str, $lab))
                 return false;
 
@@ -1369,7 +1369,7 @@
             return true; 
         }
 
-        private function interpret_lch($str): bool {
+        protected function interpret_lch($str): bool {
             if (!preg_match(self::REGEX_LCH, $str, $lch))
                 return false;
 
@@ -1419,7 +1419,7 @@
             return true; 
         }
 
-        private function interpret_hex($str): bool {
+        protected function interpret_hex($str): bool {
             switch (strlen($str)) {
                 case 4:
                 case 5:
@@ -1477,7 +1477,7 @@
             return true;
         }
 
-        private function interpret_keyword($str): bool {
+        protected function interpret_keyword($str): bool {
             $const = 'self::CSS_COLOR_'.strtoupper($str);
 
             if (defined($const))
