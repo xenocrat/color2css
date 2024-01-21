@@ -20,7 +20,7 @@ Define the CSS color `rebeccapurple` using various methods:
     $color2css = new color2css("hwb(270 20% 40% / 1)");
     $color2css = new color2css(0.4, 0.2, 0.6, 1.0);
 
-Interpret a CSS color definition. Out of range values are clamped. However, noticeably malformed values will return `false`:
+Interpret a CSS color definition, with clamped out-of-range values:
 
     $color2css->hex("#6633GG");             // returns false
     $color2css->hex("#663399");             // returns true
@@ -32,6 +32,7 @@ Interpret a CSS color definition. Out of range values are clamped. However, noti
     $color2css->hsl("hsl(270, 200%, 3%)");  // returns true
     $color2css->hwb("hwb(480 20% 40% / 1)") // returns true
     $color2css->hwb("hwb(270 200% 4% / 1)") // returns true
+    $color2css->hwb("hwb(90, 100%, 4%, 1)") // returns false
     $color2css->keyword("rebeccapurple");   // returns true
     $color2css->keyword("undefinedcolor");  // returns false
 
