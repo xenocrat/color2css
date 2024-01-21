@@ -253,11 +253,6 @@
             "w" => 0.0,
             "b" => 0.0
         );
-        private $xyz = array(
-            "x" => 0.0,
-            "y" => 0.0,
-            "z" => 0.0
-        );
         private $lab = array(
             "l" => 0.0,
             "a" => 0.0,
@@ -392,8 +387,7 @@
 
             $this->hsl = $this->rgb2hsl($this->rgb);
             $this->hwb = $this->rgb2hwb($this->rgb);
-            $this->xyz = $this->rgb2xyz($this->rgb);
-            $this->lab = $this->xyz2lab($this->xyz);
+            $this->lab = $this->rgb2lab($this->rgb);
             $this->lch = $this->lab2lch($this->lab);
 
             return true;
@@ -412,8 +406,7 @@
 
             $this->hsl = $this->rgb2hsl($this->rgb);
             $this->hwb = $this->rgb2hwb($this->rgb);
-            $this->xyz = $this->rgb2xyz($this->rgb);
-            $this->lab = $this->xyz2lab($this->xyz);
+            $this->lab = $this->rgb2lab($this->rgb);
             $this->lch = $this->lab2lch($this->lab);
 
             return true;
@@ -432,8 +425,7 @@
 
             $this->hsl = $this->rgb2hsl($this->rgb);
             $this->hwb = $this->rgb2hwb($this->rgb);
-            $this->xyz = $this->rgb2xyz($this->rgb);
-            $this->lab = $this->xyz2lab($this->xyz);
+            $this->lab = $this->rgb2lab($this->rgb);
             $this->lch = $this->lab2lch($this->lab);
 
             return true;
@@ -456,11 +448,11 @@
 
             $this->hsl["h"] = (float) $h;
 
+            $this->hwb = $this->hsl2hwb($this->hsl);
             $this->rgb = $this->hsl2rgb($this->hsl);
-            $this->hwb = $this->rgb2hwb($this->rgb);
-            $this->xyz = $this->rgb2xyz($this->rgb);
-            $this->lab = $this->xyz2lab($this->xyz);
+            $this->lab = $this->rgb2lab($this->rgb);
             $this->lch = $this->lab2lch($this->lab);
+
             return true;
         }
 
@@ -475,10 +467,9 @@
 
             $this->hsl["s"] = (float) $s;
 
+            $this->hwb = $this->hsl2hwb($this->hsl);
             $this->rgb = $this->hsl2rgb($this->hsl);
-            $this->hwb = $this->rgb2hwb($this->rgb);
-            $this->xyz = $this->rgb2xyz($this->rgb);
-            $this->lab = $this->xyz2lab($this->xyz);
+            $this->lab = $this->rgb2lab($this->rgb);
             $this->lch = $this->lab2lch($this->lab);
 
             return true;
@@ -495,10 +486,9 @@
 
             $this->hsl["l"] = (float) $l;
 
+            $this->hwb = $this->hsl2hwb($this->hsl);
             $this->rgb = $this->hsl2rgb($this->hsl);
-            $this->hwb = $this->rgb2hwb($this->rgb);
-            $this->xyz = $this->rgb2xyz($this->rgb);
-            $this->lab = $this->xyz2lab($this->xyz);
+            $this->lab = $this->rgb2lab($this->rgb);
             $this->lch = $this->lab2lch($this->lab);
 
             return true;
@@ -515,10 +505,9 @@
 
             $this->hwb["w"] = (float) $w;
 
+            $this->hsl = $this->hwb2hsl($this->hwb);
             $this->rgb = $this->hwb2rgb($this->hwb);
-            $this->hsl = $this->rgb2hsl($this->rgb);
-            $this->xyz = $this->rgb2xyz($this->rgb);
-            $this->lab = $this->xyz2lab($this->xyz);
+            $this->lab = $this->rgb2lab($this->rgb);
             $this->lch = $this->lab2lch($this->lab);
 
             return true;
@@ -535,10 +524,9 @@
 
             $this->hwb["b"] = (float) $d;
 
+            $this->hsl = $this->hwb2hsl($this->hwb);
             $this->rgb = $this->hwb2rgb($this->hwb);
-            $this->hsl = $this->rgb2hsl($this->rgb);
-            $this->xyz = $this->rgb2xyz($this->rgb);
-            $this->lab = $this->xyz2lab($this->xyz);
+            $this->lab = $this->rgb2lab($this->rgb);
             $this->lch = $this->lab2lch($this->lab);
 
             return true;
@@ -556,10 +544,10 @@
             $this->lab["l"] = (float) $l;
 
             $this->lch = $this->lab2lch($this->lab);
-            $this->xyz = $this->lab2xyz($this->lab);
-            $this->rgb = $this->xyz2rgb($this->xyz);
+            $this->rgb = $this->lab2rgb($this->lab);
             $this->hsl = $this->rgb2hsl($this->rgb);
             $this->hwb = $this->rgb2hwb($this->rgb);
+
             return true;
         }
 
@@ -575,10 +563,10 @@
             $this->lab["a"] = (float) $a;
 
             $this->lch = $this->lab2lch($this->lab);
-            $this->xyz = $this->lab2xyz($this->lab);
-            $this->rgb = $this->xyz2rgb($this->xyz);
+            $this->rgb = $this->lab2rgb($this->lab);
             $this->hsl = $this->rgb2hsl($this->rgb);
             $this->hwb = $this->rgb2hwb($this->rgb);
+
             return true;
         }
 
@@ -594,10 +582,10 @@
             $this->lab["b"] = (float) $b;
 
             $this->lch = $this->lab2lch($this->lab);
-            $this->xyz = $this->lab2xyz($this->lab);
-            $this->rgb = $this->xyz2rgb($this->xyz);
+            $this->rgb = $this->lab2rgb($this->lab);
             $this->hsl = $this->rgb2hsl($this->rgb);
             $this->hwb = $this->rgb2hwb($this->rgb);
+
             return true;
         }
 
@@ -613,10 +601,10 @@
             $this->lch["c"] = (float) $c;
 
             $this->lab = $this->lch2lab($this->lch);
-            $this->xyz = $this->lab2xyz($this->lab);
-            $this->rgb = $this->xyz2rgb($this->xyz);
+            $this->rgb = $this->lab2rgb($this->lab);
             $this->hsl = $this->rgb2hsl($this->rgb);
             $this->hwb = $this->rgb2hwb($this->rgb);
+
             return true;
         }
 
@@ -638,10 +626,10 @@
             $this->lch["h"] = (float) $h;
 
             $this->lab = $this->lch2lab($this->lch);
-            $this->xyz = $this->lab2xyz($this->lab);
-            $this->rgb = $this->xyz2rgb($this->xyz);
+            $this->rgb = $this->lab2rgb($this->lab);
             $this->hsl = $this->rgb2hsl($this->rgb);
             $this->hwb = $this->rgb2hwb($this->rgb);
+
             return true;
         }
 
@@ -758,6 +746,49 @@
             return preg_replace("/\.0+$/", "", $str);
         }
 
+        private function hsl2hwb($hsl): array {
+            $hsv = $this->hsl2hsv($hsl);
+            $hwb = $this->hsv2hwb($hsv);
+            return $hwb;
+        }
+
+        private function hwb2hsl($hwb): array {
+            $hsv = $this->hwb2hsv($hwb);
+            $hsl = $this->hsv2hsl($hsv);
+            return $hsl;
+        }
+
+        private function lab2rgb($lab): array {
+            $xyz = $this->lab2xyz($lab);
+            $rgb = $this->xyz2rgb($xyz);
+            return $rgb;
+        }
+
+        private function rgb2lab($rgb): array {
+            $xyz = $this->rgb2xyz($rgb);
+            $lab = $this->xyz2lab($xyz);
+            return $lab;
+        }
+
+        private function hue2rgb($m1, $m2, $h): float {
+            if ($h < 0)
+                $h = $h + 1;
+
+            if ($h > 1)
+                $h = $h - 1;
+
+            if (($h * 6) < 1)
+                return $m1 + ($m2 - $m1) * $h * 6;
+
+            if (($h * 2) < 1)
+                return $m2;
+
+            if (($h * 3) < 2)
+                return $m1 + ($m2 - $m1) * (((1 / 3) * 2) - $h) * 6;
+
+            return $m1;
+        }
+
         private function rgb2hsl($rgb): array {
             $r = $rgb["r"];
             $g = $rgb["g"];
@@ -800,10 +831,6 @@
             while ($h < 0)
                 $h = $h + 360;
 
-            # Prevent hue rotation at zero saturation.
-            if ($s === 0)
-                $h = $this->hsl["h"];
-
             return array(
                 "h" => (float) $h,
                 "s" => (float) $this->clamp($s, 0.0, 1.0),
@@ -833,23 +860,70 @@
             );
         }
 
-        private function hue2rgb($m1, $m2, $h): float {
-            if ($h < 0)
-                $h = $h + 1;
+        private function hsl2hsv($hsl): array {
+            $h = $hsl["h"];
+            $s = $hsl["s"];
+            $l = $hsl["l"];
 
-            if ($h > 1)
-                $h = $h - 1;
+            $v = $l + ($s * min($l, 1 - $l));
 
-            if (($h * 6) < 1)
-                return $m1 + ($m2 - $m1) * $h * 6;
+            $n = ($v == 0) ?
+                0 :
+                2 * (1 - ($l / $v)) ;
 
-            if (($h * 2) < 1)
-                return $m2;
+            return array(
+                "h" => (float) $h,
+                "s" => (float) $this->clamp($n, 0.0, 1.0),
+                "v" => (float) $this->clamp($v, 0.0, 1.0)
+            );
+        }
 
-            if (($h * 3) < 2)
-                return $m1 + ($m2 - $m1) * (((1 / 3) * 2) - $h) * 6;
+        private function hsv2hsl($hsv): array {
+            $h = $hsv["h"];
+            $s = $hsv["s"];
+            $v = $hsv["v"];
 
-            return $m1;
+            $l = $v * (1 - ($s / 2));
+
+            $n = ($l == 0 or $l == 1) ?
+                0 :
+                ($v - $l) / min($l, 1 - $l) ; 
+
+            return array(
+                "h" => (float) $h,
+                "s" => (float) $this->clamp($n, 0.0, 1.0),
+                "l" => (float) $this->clamp($l, 0.0, 1.0)
+            );
+        }
+
+        private function hsv2hwb($hsv): array {
+            $h = $hsv["h"];
+            $s = $hsv["s"];
+            $v = $hsv["v"];
+
+            $w = (1 - $s) * $v;
+            $b = 1 - $v;
+
+            return array(
+                "h" => (float) $h,
+                "w" => (float) $this->clamp($w, 0.0, 1.0),
+                "b" => (float) $this->clamp($b, 0.0, 1.0)
+            );
+        }
+
+        private function hwb2hsv($hwb): array {
+            $h = $hwb["h"];
+            $w = $hwb["w"];
+            $b = $hwb["b"];
+
+            $s = 1 - ((1 - $b == 0) ? 1 : ($w / (1 - $b)));
+            $v = 1 - $b;
+
+            return array(
+                "h" => (float) $h,
+                "s" => (float) $this->clamp($s, 0.0, 1.0),
+                "v" => (float) $this->clamp($v, 0.0, 1.0)
+            );
         }
 
         private function rgb2hwb($rgb): array {
