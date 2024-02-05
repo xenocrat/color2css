@@ -155,10 +155,6 @@
         const CSS_COLOR_YELLOWGREEN          = "#9acd32ff";
         const CSS_COLOR_REBECCAPURPLE        = "#663399ff";
 
-        const TRISTIMULUS_D65_2DEG_X         = 95.047;
-        const TRISTIMULUS_D65_2DEG_Y         = 100;
-        const TRISTIMULUS_D65_2DEG_Z         = 108.883;
-
         const REGEX_NUM                      = "[+-]?[0-9]*\.?[0-9]+";
         const REGEX_EXP                      = "[+-]?[0-9]*\.?[0-9]+[eE][0-9]+";
         const REGEX_HEX                      = "[0-9a-fA-F]";
@@ -222,6 +218,22 @@
             "( *\/ *(".self::REGEX_NUM."%?|".self::REGEX_EXP."%?|none))?".
             "\)$/";
 
+        const REGEX_OKLAB =
+            "/^oklab\( *".
+            "(".self::REGEX_NUM."%?|".self::REGEX_EXP."%?|none) +".
+            "(".self::REGEX_NUM."%?|".self::REGEX_EXP."%?|none) +".
+            "(".self::REGEX_NUM."%?|".self::REGEX_EXP."%?|none)".
+            "( *\/ *(".self::REGEX_NUM."%?|".self::REGEX_EXP."%?|none))?".
+            " *\)$/";
+
+        const REGEX_OKLCH =
+            "/^oklch\( *".
+            "(".self::REGEX_NUM."%?|".self::REGEX_EXP."%?|none) +".
+            "(".self::REGEX_NUM."%?|".self::REGEX_EXP."%?|none) +".
+            "(".self::REGEX_NUM_HUE."|".self::REGEX_EXP_HUE."|none)".
+            "( *\/ *(".self::REGEX_NUM."%?|".self::REGEX_EXP."%?|none))?".
+            "\)$/";
+
         const REGEX_HEX_SHORT =
             "/^#".
             "(".self::REGEX_HEX.")".
@@ -259,6 +271,16 @@
             "b" => 0.0
         );
         protected $lch = array(
+            "l" => 0.0,
+            "c" => 0.0,
+            "h" => 0.0
+        );
+        protected $oklab = array(
+            "l" => 0.0,
+            "a" => 0.0,
+            "b" => 0.0
+        );
+        protected $oklch = array(
             "l" => 0.0,
             "c" => 0.0,
             "h" => 0.0
@@ -342,6 +364,30 @@
             return "lch(".$l." ".$c." ".$h." / ".$p."%)";
         }
 
+        public function oklab($str = null): string|bool {
+            if (isset($str))
+                return $this->interpret_oklab($str);
+
+            $l = $this->number_format($this->oklab["l"], 3);
+            $a = $this->number_format($this->oklab["a"], 3);
+            $b = $this->number_format($this->oklab["b"], 3);
+            $p = $this->number_format($this->alpha * 100, 0);
+
+            return "oklab(".$l." ".$a." ".$b." / ".$p."%)";
+        }
+
+        public function oklch($str = null): string|bool {
+            if (isset($str))
+                return $this->interpret_oklch($str);
+
+            $l = $this->number_format($this->oklch["l"], 3);
+            $c = $this->number_format($this->oklch["c"], 3);
+            $h = $this->number_format($this->oklch["h"]);
+            $p = $this->number_format($this->alpha * 100, 0);
+
+            return "oklch(".$l." ".$c." ".$h." / ".$p."%)";
+        }
+
         public function hex($str = null): string|bool {
             if (isset($str))
                 return $this->interpret_hex($str);
@@ -387,9 +433,6 @@
 
             $this->hsl = $this->rgb2hsl($this->rgb);
             $this->hwb = $this->rgb2hwb($this->rgb);
-            $this->lab = $this->rgb2lab($this->rgb);
-            $this->lch = $this->lab2lch($this->lab);
-
             return true;
         }
 
@@ -406,9 +449,6 @@
 
             $this->hsl = $this->rgb2hsl($this->rgb);
             $this->hwb = $this->rgb2hwb($this->rgb);
-            $this->lab = $this->rgb2lab($this->rgb);
-            $this->lch = $this->lab2lch($this->lab);
-
             return true;
         }
 
@@ -425,9 +465,6 @@
 
             $this->hsl = $this->rgb2hsl($this->rgb);
             $this->hwb = $this->rgb2hwb($this->rgb);
-            $this->lab = $this->rgb2lab($this->rgb);
-            $this->lch = $this->lab2lch($this->lab);
-
             return true;
         }
 
@@ -450,9 +487,6 @@
 
             $this->hwb = $this->hsl2hwb($this->hsl);
             $this->rgb = $this->hsl2rgb($this->hsl);
-            $this->lab = $this->rgb2lab($this->rgb);
-            $this->lch = $this->lab2lch($this->lab);
-
             return true;
         }
 
@@ -469,9 +503,6 @@
 
             $this->hwb = $this->hsl2hwb($this->hsl);
             $this->rgb = $this->hsl2rgb($this->hsl);
-            $this->lab = $this->rgb2lab($this->rgb);
-            $this->lch = $this->lab2lch($this->lab);
-
             return true;
         }
 
@@ -488,9 +519,6 @@
 
             $this->hwb = $this->hsl2hwb($this->hsl);
             $this->rgb = $this->hsl2rgb($this->hsl);
-            $this->lab = $this->rgb2lab($this->rgb);
-            $this->lch = $this->lab2lch($this->lab);
-
             return true;
         }
 
@@ -507,9 +535,6 @@
 
             $this->hsl = $this->hwb2hsl($this->hwb);
             $this->rgb = $this->hwb2rgb($this->hwb);
-            $this->lab = $this->rgb2lab($this->rgb);
-            $this->lch = $this->lab2lch($this->lab);
-
             return true;
         }
 
@@ -526,9 +551,6 @@
 
             $this->hsl = $this->hwb2hsl($this->hwb);
             $this->rgb = $this->hwb2rgb($this->hwb);
-            $this->lab = $this->rgb2lab($this->rgb);
-            $this->lch = $this->lab2lch($this->lab);
-
             return true;
         }
 
@@ -544,10 +566,6 @@
             $this->lab["l"] = (float) $l;
 
             $this->lch = $this->lab2lch($this->lab);
-            $this->rgb = $this->lab2rgb($this->lab);
-            $this->hsl = $this->rgb2hsl($this->rgb);
-            $this->hwb = $this->rgb2hwb($this->rgb);
-
             return true;
         }
 
@@ -563,10 +581,6 @@
             $this->lab["a"] = (float) $a;
 
             $this->lch = $this->lab2lch($this->lab);
-            $this->rgb = $this->lab2rgb($this->lab);
-            $this->hsl = $this->rgb2hsl($this->rgb);
-            $this->hwb = $this->rgb2hwb($this->rgb);
-
             return true;
         }
 
@@ -582,10 +596,6 @@
             $this->lab["b"] = (float) $b;
 
             $this->lch = $this->lab2lch($this->lab);
-            $this->rgb = $this->lab2rgb($this->lab);
-            $this->hsl = $this->rgb2hsl($this->rgb);
-            $this->hwb = $this->rgb2hwb($this->rgb);
-
             return true;
         }
 
@@ -601,10 +611,6 @@
             $this->lch["c"] = (float) $c;
 
             $this->lab = $this->lch2lab($this->lch);
-            $this->rgb = $this->lab2rgb($this->lab);
-            $this->hsl = $this->rgb2hsl($this->rgb);
-            $this->hwb = $this->rgb2hwb($this->rgb);
-
             return true;
         }
 
@@ -626,10 +632,87 @@
             $this->lch["h"] = (float) $h;
 
             $this->lab = $this->lch2lab($this->lch);
-            $this->rgb = $this->lab2rgb($this->lab);
-            $this->hsl = $this->rgb2hsl($this->rgb);
-            $this->hwb = $this->rgb2hwb($this->rgb);
+            return true;
+        }
 
+        public function ok_l($l = null): float|bool {
+            if (!isset($l))
+                return $this->oklab["l"];
+
+            if (!is_numeric($l) or $l < 0 or $l > 1)
+                throw new \RangeException(
+                    "OK lightness value must be in the range 0-1."
+                );
+
+            $this->oklab["l"] = (float) $l;
+
+            $this->oklch = $this->oklab2oklch($this->oklab);
+            return true;
+        }
+
+        public function ok_a($a = null): float|bool {
+            if (!isset($a))
+                return $this->oklab["a"];
+
+            if (!is_numeric($a))
+                throw new \InvalidArgumentException(
+                    "OK A axis value must be numeric."
+                );
+
+            $this->oklab["a"] = (float) $a;
+
+            $this->oklch = $this->oklab2oklch($this->oklab);
+            return true;
+        }
+
+        public function ok_b($b = null): float|bool {
+            if (!isset($b))
+                return $this->oklab["b"];
+
+            if (!is_numeric($b))
+                throw new \InvalidArgumentException(
+                    "OK B axis value must be numeric."
+                );
+
+            $this->oklab["b"] = (float) $b;
+
+            $this->oklch = $this->oklab2oklch($this->oklab);
+            return true;
+        }
+
+        public function ok_c($c = null): float|bool {
+            if (!isset($c))
+                return $this->oklch["c"];
+
+            if (!is_numeric($c) or $c < 0)
+                throw new \RangeException(
+                    "OK chroma value must be > 0."
+                );
+
+            $this->oklch["c"] = (float) $c;
+
+            $this->oklab = $this->oklch2oklab($this->oklch);
+            return true;
+        }
+
+        public function ok_h($h = null): float|bool {
+            if (!isset($h))
+                return $this->oklch["h"];
+
+            if (!is_numeric($h))
+                throw new \InvalidArgumentException(
+                    "OK hue value must be numeric."
+                );
+
+            if ($h > 360)
+                $h = $h % 360;
+
+            while ($h < 0)
+                $h = $h + 360;
+
+            $this->oklch["h"] = (float) $h;
+
+            $this->oklab = $this->oklch2oklab($this->oklch);
             return true;
         }
 
@@ -699,16 +782,19 @@
                 );
 
             $n = $color->red();
+
             $r = ($n <= 0.03928) ?
                 $n / 12.92 :
                 (($n + 0.055) / 1.055) ** 2.4 ;
 
             $n = $color->green();
+
             $g = ($n <= 0.03928) ?
                 $n / 12.92 :
                 (($n + 0.055) / 1.055) ** 2.4 ;
 
             $n = $color->blue();
+
             $b = ($n <= 0.03928) ?
                 $n / 12.92 :
                 (($n + 0.055) / 1.055) ** 2.4 ;
@@ -756,18 +842,6 @@
             $hsv = $this->hwb2hsv($hwb);
             $hsl = $this->hsv2hsl($hsv);
             return $hsl;
-        }
-
-        protected function lab2rgb($lab): array {
-            $xyz = $this->lab2xyz($lab);
-            $rgb = $this->xyz2rgb($xyz);
-            return $rgb;
-        }
-
-        protected function rgb2lab($rgb): array {
-            $xyz = $this->rgb2xyz($rgb);
-            $lab = $this->xyz2lab($xyz);
-            return $lab;
         }
 
         protected function hue2rgb($m1, $m2, $h): float {
@@ -969,126 +1043,6 @@
             );
         }
 
-        protected function rgb2xyz($rgb): array {
-            $r = $rgb["r"];
-            $g = $rgb["g"];
-            $b = $rgb["b"];
-
-            $r = ($r > 0.04045) ?
-                (($r + 0.055) / 1.055) ** 2.4 :
-                $r / 12.92 ;
-
-            $g = ($g > 0.04045) ?
-                (($g + 0.055) / 1.055) ** 2.4 :
-                $g / 12.92 ;
-
-            $b = ($b > 0.04045) ?
-                (($b + 0.055) / 1.055) ** 2.4 :
-                $b / 12.92 ;
-
-            $r = $r * 100;
-            $g = $g * 100;
-            $b = $b * 100;
-
-            $x = ($r * 0.4124) + ($g * 0.3576) + ($b * 0.1805);
-            $y = ($r * 0.2126) + ($g * 0.7152) + ($b * 0.0722);
-            $z = ($r * 0.0193) + ($g * 0.1192) + ($b * 0.9505);
-
-            return array(
-                "x" => (float) $x,
-                "y" => (float) $y,
-                "z" => (float) $z
-            );
-        }
-
-        protected function xyz2rgb($xyz): array {
-            $x = $xyz["x"] / 100;
-            $y = $xyz["y"] / 100;
-            $z = $xyz["z"] / 100;
-
-            $r = ($x *  3.2406) + ($y * -1.5372) + ($z * -0.4986);
-            $g = ($x * -0.9689) + ($y *  1.8758) + ($z *  0.0415);
-            $b = ($x *  0.0557) + ($y * -0.2040) + ($z *  1.0570);
-
-            $r = ($r > 0.0031308) ?
-                (1.055 * ($r ** (1 / 2.4))) - 0.055 :
-                12.92 * $r;
-
-            $g = ($g > 0.0031308) ?
-                (1.055 * ($g ** (1 / 2.4))) - 0.055 :
-                12.92 * $g;
-
-            $b = ($b > 0.0031308) ?
-                (1.055 * ($b ** (1 / 2.4))) - 0.055 :
-                12.92 * $b;
-
-            return array(
-                "r" => (float) $this->clamp($r, 0.0, 1.0),
-                "g" => (float) $this->clamp($g, 0.0, 1.0),
-                "b" => (float) $this->clamp($b, 0.0, 1.0)
-            );
-        }
-
-        protected function xyz2lab($xyz): array {
-            $x = $xyz["x"] / self::TRISTIMULUS_D65_2DEG_X;
-            $y = $xyz["y"] / self::TRISTIMULUS_D65_2DEG_Y;
-            $z = $xyz["z"] / self::TRISTIMULUS_D65_2DEG_Z;
-
-            $x = ($x > 0.008856) ?
-                $x ** (1 / 3) :
-                (7.787 * $x) + (16 / 116) ;
-
-            $y = ($y > 0.008856) ?
-                $y ** (1 / 3) :
-                (7.787 * $y) + (16 / 116) ;
-
-            $z = ($z > 0.008856) ?
-                $z ** (1 / 3) :
-                (7.787 * $z) + (16 / 116) ;
-
-            $l = (116 * $y) - 16;
-            $a = 500 * ($x - $y);
-            $b = 200 * ($y - $z);
-
-            return array(
-                "l" => (float) $this->clamp($l, 0.0, 100),
-                "a" => (float) $a,
-                "b" => (float) $b
-            );
-        }
-
-        protected function lab2xyz($lab): array {
-            $l = $lab["l"];
-            $a = $lab["a"];
-            $b = $lab["b"];
-
-            $y = ($l + 16) / 116;
-            $x = ($a / 500) + $y;
-            $z = $y - ($b / 200);
-
-            $y = ($y ** 3 > 0.008856) ?
-                $y ** 3 :
-                ($y - (16 / 116)) / 7.787 ;
-
-            $x = ($x ** 3 > 0.008856) ?
-                $x ** 3 :
-                ($x - (16 / 116)) / 7.787 ;
-
-            $z = ($z ** 3 > 0.008856) ?
-                $z ** 3 :
-                ($z - (16 / 116)) / 7.787 ;
-
-            $x = $x * self::TRISTIMULUS_D65_2DEG_X;
-            $y = $y * self::TRISTIMULUS_D65_2DEG_Y;
-            $z = $z * self::TRISTIMULUS_D65_2DEG_Z;
-
-            return array(
-                "x" => (float) $x,
-                "y" => (float) $y,
-                "z" => (float) $z
-            );
-        }
-
         protected function lab2lch($lab): array {
             $l = $lab["l"];
             $a = $lab["a"];
@@ -1124,6 +1078,41 @@
             );
         }
 
+        protected function oklab2oklch($oklab): array {
+            $l = $oklab["l"];
+            $a = $oklab["a"];
+            $b = $oklab["b"];
+
+            $h = atan2($b, $a);
+
+            $h = ($h > 0) ?
+                ($h / M_PI) * 180 :
+                360 - (abs($h) / M_PI) * 180 ;
+
+            $c = sqrt(($a ** 2) + ($b ** 2));
+
+            return array(
+                "l" => (float) $this->clamp($l, 0.0, 1.0),
+                "c" => (float) $this->clamp($c, 0.0, INF),
+                "h" => (float) $h
+            );
+        }
+
+        protected function oklch2oklab($oklch): array {
+            $l = $oklch["l"];
+            $c = $oklch["c"];
+            $h = $oklch["h"];
+
+            $a = cos(deg2rad($h)) * $c;
+            $b = sin(deg2rad($h)) * $c;
+
+            return array(
+                "l" => (float) $this->clamp($l, 0.0, 1.0),
+                "a" => (float) $a,
+                "b" => (float) $b
+            );
+        }
+
         protected function interpret($color): void {
             if (!is_string($color))
                 throw new \InvalidArgumentException(
@@ -1152,6 +1141,16 @@
 
             if (preg_match("/^lch\(/", $color)) {
                 if ($this->interpret_lch($color))
+                    return;
+            }
+
+            if (preg_match("/^oklab\(/", $color)) {
+                if ($this->interpret_oklab($color))
+                    return;
+            }
+
+            if (preg_match("/^oklch\(/", $color)) {
+                if ($this->interpret_oklch($color))
                     return;
             }
 
@@ -1420,6 +1419,115 @@
                 $this->clamp($c, 0.0, INF)
             );
             $this->cie_h(
+                $h
+            );
+            $this->alpha(
+                $this->clamp($p, 0.0, 1.0)
+            );
+
+            return true; 
+        }
+
+        protected function interpret_oklab($str): bool {
+            if (!preg_match(self::REGEX_OKLAB, $str, $lab))
+                return false;
+
+            $p = 1.0;
+
+            for ($i = 1; $i < count($lab) ; $i++) { 
+                $val = $lab[$i];
+
+                if ($val == "none")
+                    $val = 0;
+
+                switch ($i) {
+                    case 1:
+                        $l = strpos($val, "%") ?
+                            (float) $val / 100 :
+                            (float) $val ;
+
+                        break;
+                    case 2:
+                        $a = strpos($val, "%") ?
+                            (float) $val / 250 :
+                            (float) $val ;
+
+                        break;
+                    case 3:
+                        $b = strpos($val, "%") ?
+                            (float) $val / 250 :
+                            (float) $val ;
+
+                        break;
+                    case 5:
+                        $p = strpos($val, "%") ?
+                            (float) $val / 100 :
+                            (float) $val ;
+
+                        break;
+                }
+            }
+
+            $this->ok_l(
+                $this->clamp($l, 0.0, 1.0)
+            );
+            $this->ok_a(
+                $a
+            );
+            $this->ok_b(
+                $b
+            );
+            $this->alpha(
+                $this->clamp($p, 0.0, 1.0)
+            );
+
+            return true; 
+        }
+
+        protected function interpret_oklch($str): bool {
+            if (!preg_match(self::REGEX_OKLCH, $str, $lch))
+                return false;
+
+            $p = 1.0;
+
+            for ($i = 1; $i < count($lch) ; $i++) { 
+                $val = $lch[$i];
+
+                if ($val == "none")
+                    $val = 0;
+
+                switch ($i) {
+                    case 1:
+                        $l = strpos($val, "%") ?
+                            (float) $val / 100 :
+                            (float) $val ;
+
+                        break;
+                    case 2:
+                        $c = strpos($val, "%") ?
+                            (float) $val / 250 :
+                            (float) $val ;
+
+                        break;
+                    case 3:
+                        $h = $this->deg($val);
+                        break;
+                    case 7:
+                        $p = strpos($val, "%") ?
+                            (float) $val / 100 :
+                            (float) $val ;
+
+                        break;
+                }
+            }
+
+            $this->ok_l(
+                $this->clamp($l, 0.0, 1.0)
+            );
+            $this->ok_c(
+                $this->clamp($c, 0.0, INF)
+            );
+            $this->ok_h(
                 $h
             );
             $this->alpha(
