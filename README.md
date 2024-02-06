@@ -149,5 +149,5 @@ Adjust the OK LCH hue value of a color, in the range 0-360:
 
 Export a CSS color definition:
 
-    $color2css->oklab();    // returns "oklab(0.750 0.096 0.027 / 100%)"
-    $color2css->oklch();    // returns "oklch(0.750 0.100 15.9 / 100%)"
+    $color2css->oklab();    // returns "oklab(0.750 0.144 0.041 / 100%)"
+    $color2css->oklch();    // returns "oklch(0.750 0.150 15.9 / 100%)"
