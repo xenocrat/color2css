@@ -382,7 +382,7 @@
 
             $l = $this->number_format($this->oklch["l"], 3);
             $c = $this->number_format($this->oklch["c"], 3);
-            $h = $this->number_format($this->oklch["h"]);
+            $h = $this->number_format($this->oklch["h"], 1);
             $p = $this->number_format($this->alpha * 100, 0);
 
             return "oklch(".$l." ".$c." ".$h." / ".$p."%)";
@@ -431,8 +431,18 @@
 
             $this->rgb["r"] = (float) $r;
 
-            $this->hsl = $this->rgb2hsl($this->rgb);
-            $this->hwb = $this->rgb2hwb($this->rgb);
+            $hsl = $this->rgb2hsl($this->rgb);
+
+            if (is_nan($hsl["h"]))
+                $hsl["h"] = $this->hsl["h"];
+
+            $hwb = $this->rgb2hwb($this->rgb);
+
+            if (is_nan($hwb["h"]))
+                $hwb["h"] = $this->hwb["h"];
+
+            $this->hsl = $hsl;
+            $this->hwb = $hwb;
             return true;
         }
 
@@ -447,8 +457,18 @@
 
             $this->rgb["g"] = (float) $g;
 
-            $this->hsl = $this->rgb2hsl($this->rgb);
-            $this->hwb = $this->rgb2hwb($this->rgb);
+            $hsl = $this->rgb2hsl($this->rgb);
+
+            if (is_nan($hsl["h"]))
+                $hsl["h"] = $this->hsl["h"];
+
+            $hwb = $this->rgb2hwb($this->rgb);
+
+            if (is_nan($hwb["h"]))
+                $hwb["h"] = $this->hwb["h"];
+
+            $this->hsl = $hsl;
+            $this->hwb = $hwb;
             return true;
         }
 
@@ -463,8 +483,18 @@
 
             $this->rgb["b"] = (float) $b;
 
-            $this->hsl = $this->rgb2hsl($this->rgb);
-            $this->hwb = $this->rgb2hwb($this->rgb);
+            $hsl = $this->rgb2hsl($this->rgb);
+
+            if (is_nan($hsl["h"]))
+                $hsl["h"] = $this->hsl["h"];
+
+            $hwb = $this->rgb2hwb($this->rgb);
+
+            if (is_nan($hwb["h"]))
+                $hwb["h"] = $this->hwb["h"];
+
+            $this->hsl = $hsl;
+            $this->hwb = $hwb;
             return true;
         }
 
@@ -565,7 +595,12 @@
 
             $this->lab["l"] = (float) $l;
 
-            $this->lch = $this->lab2lch($this->lab);
+            $lch = $this->lab2lch($this->lab);
+
+            if (is_nan($lch["h"]))
+                $lch["h"] = $this->lch["h"];
+
+            $this->lch = $lch;
             return true;
         }
 
@@ -580,7 +615,12 @@
 
             $this->lab["a"] = (float) $a;
 
-            $this->lch = $this->lab2lch($this->lab);
+            $lch = $this->lab2lch($this->lab);
+
+            if (is_nan($lch["h"]))
+                $lch["h"] = $this->lch["h"];
+
+            $this->lch = $lch;
             return true;
         }
 
@@ -595,7 +635,12 @@
 
             $this->lab["b"] = (float) $b;
 
-            $this->lch = $this->lab2lch($this->lab);
+            $lch = $this->lab2lch($this->lab);
+
+            if (is_nan($lch["h"]))
+                $lch["h"] = $this->lch["h"];
+
+            $this->lch = $lch;
             return true;
         }
 
@@ -646,7 +691,12 @@
 
             $this->oklab["l"] = (float) $l;
 
-            $this->oklch = $this->oklab2oklch($this->oklab);
+            $oklch = $this->oklab2oklch($this->oklab);
+
+            if (is_nan($oklch["h"]))
+                $oklch["h"] = $this->oklch["h"];
+
+            $this->oklch = $oklch;
             return true;
         }
 
@@ -661,7 +711,12 @@
 
             $this->oklab["a"] = (float) $a;
 
-            $this->oklch = $this->oklab2oklch($this->oklab);
+            $oklch = $this->oklab2oklch($this->oklab);
+
+            if (is_nan($oklch["h"]))
+                $oklch["h"] = $this->oklch["h"];
+
+            $this->oklch = $oklch;
             return true;
         }
 
@@ -676,7 +731,12 @@
 
             $this->oklab["b"] = (float) $b;
 
-            $this->oklch = $this->oklab2oklch($this->oklab);
+            $oklch = $this->oklab2oklch($this->oklab);
+
+            if (is_nan($oklch["h"]))
+                $oklch["h"] = $this->oklch["h"];
+
+            $this->oklch = $oklch;
             return true;
         }
 
@@ -878,32 +938,36 @@
                 0 :
                 $c / (1 - abs((2 * $l) - 1)) ;
 
-            switch ($max) {
-                case $r:
-                    $h = ($c == 0) ?
-                        0 :
-                        60 * ($g - $b) / $c ;
+            if ($s > 0) {
+                switch ($max) {
+                    case $r:
+                        $h = ($c == 0) ?
+                            0 :
+                            60 * ($g - $b) / $c ;
 
-                    break;
-                case $g:
-                    $h = ($c == 0) ?
-                        0 :
-                        60 * ((($b - $r) / $c) + 2) ;
+                        break;
+                    case $g:
+                        $h = ($c == 0) ?
+                            0 :
+                            60 * ((($b - $r) / $c) + 2) ;
 
-                    break;
-                case $b:
-                    $h = ($c == 0) ?
-                        0 :
-                        60 * ((($r - $g) / $c) + 4) ;
+                        break;
+                    case $b:
+                        $h = ($c == 0) ?
+                            0 :
+                            60 * ((($r - $g) / $c) + 4) ;
 
-                    break;
+                        break;
+                }
+
+                if ($h > 360)
+                    $h = $h % 360;
+
+                while ($h < 0)
+                    $h = $h + 360;
+            } else {
+                $h = NAN;
             }
-
-            if ($h > 360)
-                $h = $h % 360;
-
-            while ($h < 0)
-                $h = $h + 360;
 
             return array(
                 "h" => (float) $h,
@@ -1048,13 +1112,17 @@
             $a = $lab["a"];
             $b = $lab["b"];
 
-            $h = atan2($b, $a);
-
-            $h = ($h > 0) ?
-                ($h / M_PI) * 180 :
-                360 - (abs($h) / M_PI) * 180 ;
-
             $c = sqrt(($a ** 2) + ($b ** 2));
+
+            if ($c > 0) {
+                $h = atan2($b, $a);
+
+                $h = ($h > 0) ?
+                    ($h / M_PI) * 180 :
+                    360 - (abs($h) / M_PI) * 180 ;
+            } else {
+                $h = NAN;
+            }
 
             return array(
                 "l" => (float) $this->clamp($l, 0.0, 100),
@@ -1083,13 +1151,17 @@
             $a = $oklab["a"];
             $b = $oklab["b"];
 
-            $h = atan2($b, $a);
-
-            $h = ($h > 0) ?
-                ($h / M_PI) * 180 :
-                360 - (abs($h) / M_PI) * 180 ;
-
             $c = sqrt(($a ** 2) + ($b ** 2));
+
+            if ($c > 0) {
+                $h = atan2($b, $a);
+
+                $h = ($h > 0) ?
+                    ($h / M_PI) * 180 :
+                    360 - (abs($h) / M_PI) * 180 ;
+            } else {
+                $h = NAN;
+            }
 
             return array(
                 "l" => (float) $this->clamp($l, 0.0, 1.0),
