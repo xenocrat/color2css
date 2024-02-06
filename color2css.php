@@ -260,6 +260,11 @@
             "s" => 0.0,
             "l" => 0.0
         );
+        protected $hsv = array(
+            "h" => 0.0,
+            "s" => 0.0,
+            "v" => 0.0
+        );
         protected $hwb = array(
             "h" => 0.0,
             "w" => 0.0,
@@ -515,7 +520,8 @@
 
             $this->hsl["h"] = (float) $h;
 
-            $this->hwb = $this->hsl2hwb($this->hsl);
+            $this->hsv = $this->hsl2hsv($this->hsl);
+            $this->hwb = $this->hsv2hwb($this->hsv);
             $this->rgb = $this->hsl2rgb($this->hsl);
             return true;
         }
@@ -531,7 +537,8 @@
 
             $this->hsl["s"] = (float) $s;
 
-            $this->hwb = $this->hsl2hwb($this->hsl);
+            $this->hsv = $this->hsl2hsv($this->hsl);
+            $this->hwb = $this->hsv2hwb($this->hsv);
             $this->rgb = $this->hsl2rgb($this->hsl);
             return true;
         }
@@ -547,7 +554,8 @@
 
             $this->hsl["l"] = (float) $l;
 
-            $this->hwb = $this->hsl2hwb($this->hsl);
+            $this->hsv = $this->hsl2hsv($this->hsl);
+            $this->hwb = $this->hsv2hwb($this->hsv);
             $this->rgb = $this->hsl2rgb($this->hsl);
             return true;
         }
@@ -563,7 +571,8 @@
 
             $this->hwb["w"] = (float) $w;
 
-            $this->hsl = $this->hwb2hsl($this->hwb);
+            $this->hsv = $this->hwb2hsv($this->hwb);
+            $this->hsl = $this->hsv2hsl($this->hsv);
             $this->rgb = $this->hwb2rgb($this->hwb);
             return true;
         }
@@ -579,7 +588,8 @@
 
             $this->hwb["b"] = (float) $d;
 
-            $this->hsl = $this->hwb2hsl($this->hwb);
+            $this->hsv = $this->hwb2hsv($this->hwb);
+            $this->hsl = $this->hsv2hsl($this->hsv);
             $this->rgb = $this->hwb2rgb($this->hwb);
             return true;
         }
@@ -890,18 +900,6 @@
         protected function number_format($num, $decimals = 1): string {
             $str = number_format($num, $decimals, ".", "");
             return preg_replace("/\.0+$/", "", $str);
-        }
-
-        protected function hsl2hwb($hsl): array {
-            $hsv = $this->hsl2hsv($hsl);
-            $hwb = $this->hsv2hwb($hsv);
-            return $hwb;
-        }
-
-        protected function hwb2hsl($hwb): array {
-            $hsv = $this->hwb2hsv($hwb);
-            $hsl = $this->hsv2hsl($hsv);
-            return $hsl;
         }
 
         protected function hue2rgb($m1, $m2, $h): float {
