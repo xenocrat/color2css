@@ -77,12 +77,12 @@ Calculate WCAG contrast ratio as a float value between 1 and 21:
 Export a CSS color definition:
 
     $color2ccc->keyword("tomato");
-    $color2css->hex();                      // returns "#ff6347"
-    $color2css->hexa();                     // returns "#ff6347ff"
-    $color2css->rgb();                      // returns "rgb(255 99 71 / 100%)"
-    $color2css->hsl();                      // returns "hsl(9.1 100% 63.9% / 100%)"
-    $color2css->hwb();                      // returns "hwb(9.1 27.9% 0% / 100%)"
-    $color2css->keyword();                  // returns "tomato";
+    $color2css->hex();              // returns "#ff6347"
+    $color2css->hexa();             // returns "#ff6347ff"
+    $color2css->rgb();              // returns "rgb(255 99 71 / 100%)"
+    $color2css->hsl();              // returns "hsl(9.1 100% 63.9% / 100%)"
+    $color2css->hwb();              // returns "hwb(9.1 27.9% 0% / 100%)"
+    $color2css->keyword();          // returns "tomato";
 
 ### CIE Lab
 
@@ -115,8 +115,8 @@ Adjust the CIE LCH hue value of a color, in the range 0-360:
 
 Export a CSS color definition:
 
-    $color2css->lab();                      // returns "lab(64 -35.1 -77.4 / 100%)"
-    $color2css->lch();                      // returns "lch(64 85 245.6 / 100%)"
+    $color2css->lab();  // returns "lab(64 -35.1 -77.4 / 100%)"
+    $color2css->lch();  // returns "lch(64 85 245.6 / 100%)"
 
 ### OKlab
 
@@ -149,5 +149,5 @@ Adjust the OK LCH hue value of a color, in the range 0-360:
 
 Export a CSS color definition:
 
-    $color2css->oklab();                    // returns "oklab(0.750 0.096 0.027 / 100%)"
-    $color2css->oklch();                    // returns "oklch(0.750 0.100 15.9 / 100%)"
+    $color2css->oklab();    // returns "oklab(0.750 0.096 0.027 / 100%)"
+    $color2css->oklch();    // returns "oklch(0.750 0.100 15.9 / 100%)"
