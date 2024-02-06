@@ -309,6 +309,20 @@
             $this->alpha((count($args) == 4) ? $args[3] : 1.0);
         }
 
+        public function list_keywords(): array {
+            $keywords = array();
+
+            $reflect = new \ReflectionClass(get_class($this));
+            $constants = $reflect->getConstants();
+
+            foreach ($constants as $key => $val) {
+                if (preg_match("/^CSS_COLOR_/", $key))
+                    $keywords[strtolower(substr($key, 10))] = $val;
+            }
+
+            return $keywords;
+        }
+
         public function rgb($str = null): string|bool {
             if (isset($str))
                 return $this->interpret_rgb($str);
@@ -1672,19 +1686,5 @@
                 return $this->interpret_hex(constant($const));
 
             return false;
-        }
-
-        public function keywords(): array {
-            $keywords = array();
-
-            $reflect = new \ReflectionClass(get_class($this));
-            $constants = $reflect->getConstants();
-
-            foreach ($constants as $key => $val) {
-                if (preg_match("/^CSS_COLOR_/", $key))
-                    $keywords[strtolower(substr($key, 10))] = $val;
-            }
-
-            return $keywords;
         }
     }
