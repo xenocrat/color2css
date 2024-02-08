@@ -295,8 +295,12 @@
         public function __construct($color = "transparent") {
             $args = func_get_args();
 
-            if (count($args) < 2)
-                return $this->interpret($color);
+            if (count($args) < 2) {
+                if ($color instanceof color2css)
+                    return $this->take($color);
+                else
+                    return $this->interpret($color);
+            }
 
             if (count($args) < 3)
                 throw new \BadMethodCallException(
@@ -886,6 +890,45 @@
             $l = (0.2126 * $r) + (0.7152 * $g) + (0.0722 * $b);
 
             return (float) $l;
+        }
+
+        protected function take($color): void {
+            $this->rgb = array(
+                "r" => $color->red(),
+                "g" => $color->green(),
+                "b" => $color->blue()
+            );
+            $this->hsl = array(
+                "h" => $color->hue(),
+                "s" => $color->saturation(),
+                "l" => $color->lightness()
+            );
+            $this->hwb = array(
+                "h" => $color->hue(),
+                "w" => $color->whiteness(),
+                "b" => $color->blackness()
+            );
+            $this->lab = array(
+                "l" => $color->cie_l(),
+                "a" => $color->cie_a(),
+                "b" => $color->cie_b()
+            );
+            $this->lch = array(
+                "l" => $color->cie_l(),
+                "c" => $color->cie_c(),
+                "h" => $color->cie_h()
+            );
+            $this->oklab = array(
+                "l" => $color->ok_l(),
+                "a" => $color->ok_a(),
+                "b" => $color->ok_b()
+            );
+            $this->oklch = array(
+                "l" => $color->ok_l(),
+                "c" => $color->ok_c(),
+                "h" => $color->ok_h()
+            );
+            $this->alpha = $color->alpha();
         }
 
         protected function deg($str): float {
