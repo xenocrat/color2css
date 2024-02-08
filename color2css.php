@@ -449,7 +449,7 @@
 
             if (!is_numeric($r) or $r < 0 or $r > 1)
                 throw new \RangeException(
-                    "Red value must be in the range 0-1."
+                    "RGB red value must be in the range 0-1."
                 );
 
             $this->rgb["r"] = (float) $r;
@@ -475,7 +475,7 @@
 
             if (!is_numeric($g) or $g < 0 or $g > 1)
                 throw new \RangeException(
-                    "Green value must be in the range 0-1."
+                    "RGB green value must be in the range 0-1."
                 );
 
             $this->rgb["g"] = (float) $g;
@@ -501,7 +501,7 @@
 
             if (!is_numeric($b) or $b < 0 or $b > 1)
                 throw new \RangeException(
-                    "Blue value must be in the range 0-1."
+                    "RGB blue value must be in the range 0-1."
                 );
 
             $this->rgb["b"] = (float) $b;
@@ -527,7 +527,7 @@
 
             if (!is_numeric($h))
                 throw new \InvalidArgumentException(
-                    "Hue value must be numeric."
+                    "HSL hue value must be numeric."
                 );
 
             if ($h > 360)
@@ -550,7 +550,7 @@
 
             if (!is_numeric($s) or $s < 0 or $s > 1)
                 throw new \RangeException(
-                    "Saturation value must be in the range 0-1."
+                    "HSL saturation value must be in the range 0-1."
                 );
 
             $this->hsl["s"] = (float) $s;
@@ -567,7 +567,7 @@
 
             if (!is_numeric($l) or $l < 0 or $l > 1)
                 throw new \RangeException(
-                    "Lightness value must be in the range 0-1."
+                    "HSL lightness value must be in the range 0-1."
                 );
 
             $this->hsl["l"] = (float) $l;
@@ -584,7 +584,7 @@
 
             if (!is_numeric($w) or $w < 0 or $w > 1)
                 throw new \RangeException(
-                    "Whiteness value must be in the range 0-1."
+                    "HWB whiteness value must be in the range 0-1."
                 );
 
             $this->hwb["w"] = (float) $w;
@@ -601,12 +601,46 @@
 
             if (!is_numeric($d) or $d < 0 or $d > 1)
                 throw new \RangeException(
-                    "Blackness value must be in the range 0-1."
+                    "HWB blackness value must be in the range 0-1."
                 );
 
             $this->hwb["b"] = (float) $d;
 
             $this->hsv = $this->hwb2hsv($this->hwb);
+            $this->hsl = $this->hsv2hsl($this->hsv);
+            $this->rgb = $this->hwb2rgb($this->hwb);
+            return true;
+        }
+
+        public function colorfulness($s = null): float|bool {
+            if (!isset($s))
+                return $this->hsv["s"];
+
+            if (!is_numeric($s) or $s < 0 or $s > 1)
+                throw new \RangeException(
+                    "HSV colorfulness value must be in the range 0-1."
+                );
+
+            $this->hsv["s"] = (float) $s;
+
+            $this->hwb = $this->hsv2hwb($this->hsv);
+            $this->hsl = $this->hsv2hsl($this->hsv);
+            $this->rgb = $this->hwb2rgb($this->hwb);
+            return true;
+        }
+
+        public function brightness($v = null): float|bool {
+            if (!isset($v))
+                return $this->hsv["v"];
+
+            if (!is_numeric($v) or $v < 0 or $v > 1)
+                throw new \RangeException(
+                    "HSV brightness value must be in the range 0-1."
+                );
+
+            $this->hsv["v"] = (float) $v;
+
+            $this->hwb = $this->hsv2hwb($this->hsv);
             $this->hsl = $this->hsv2hsl($this->hsv);
             $this->rgb = $this->hwb2rgb($this->hwb);
             return true;
@@ -902,6 +936,11 @@
                 "h" => $color->hue(),
                 "s" => $color->saturation(),
                 "l" => $color->lightness()
+            );
+            $this->hsv = array(
+                "h" => $color->hue(),
+                "s" => $color->colorfulness(),
+                "v" => $color->brightness()
             );
             $this->hwb = array(
                 "h" => $color->hue(),
