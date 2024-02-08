@@ -1,6 +1,6 @@
 ## What is this?
 
-color2css is a PHP class for CSS color interpreting and conversion. In the sRGB color space it converts between RGB, HSL, HSV, HWB, hexidecimal, and CSS color keywords. In the CIE Lab color space it converts between Lab and LCH. In the OKlab color space it converts between Lab and LCH.
+color2css is a PHP class for CSS color interpreting and conversion. In the sRGB color space it converts between RGB, HSL, HSV, HWB, hexidecimal, and CSS color keywords. In the CIE Lab color space it converts between Lab and LCH, and in the OKlab color space it converts between OKlab and OKlch.
 
 ## Requirements
 
