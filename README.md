@@ -1,6 +1,6 @@
 ## What is this?
 
-color2css is a PHP class for CSS color interpreting and conversion. In the sRGB color space it converts between RGB, HSL, HWB, hexidecimal, and CSS color keywords. In the CIE Lab color space it converts between Lab and LCH. In the OKlab color space it converts between Lab and LCH.
+color2css is a PHP class for CSS color interpreting and conversion. In the sRGB color space it converts between RGB, HSL, HSV, HWB, hexidecimal, and CSS color keywords. In the CIE Lab color space it converts between Lab and LCH. In the OKlab color space it converts between Lab and LCH.
 
 ## Requirements
 
@@ -13,10 +13,17 @@ Define a new empty color in the sRGB, CIE Lab, and OKlab color spaces:
     use xenocrat\color2css;
     $color2css = new color2css();
 
+Define a new color by taking the properties of another instance:
+
+    $color1 = new color2css("white");
+    $color2 = new color2css($color1);
+
 Adjust the alpha value of colors in the sRGB, CIE Lab, and OKlab color spaces:
 
     $color2css->alpha(0.5);
     $color2css->alpha(1.0);
+
+All public non-static methods act as setters when supplied with a value, or getters when not supplied with a value.
 
 ### sRGB
 
@@ -58,17 +65,22 @@ Adjust the hue of a color, in the range 0-360:
 
     $color2css->hue(9);
 
-Adjust the saturation and lightness of a color, in the range 0-1:
+Adjust the HSL saturation and lightness of a color, in the range 0-1:
 
     $color2css->saturation(1.0);
     $color2css->lightness(0.64);
 
-Adjust the whiteness and blackness of a color, in the range 0-1:
+Adjust the HWB whiteness and blackness of a color, in the range 0-1:
 
     $color2css->whiteness(0.28);
     $color2css->blackness(0);
 
-Calculate WCAG contrast ratio as a float value between 1 and 21:
+Adjust the HSV saturation (colorfulness) and value (brightness) of a color, in the range 0-1:
+
+    $color2css->colorfulness(0.6);
+    $color2css->brightness(0.254);
+
+Calculate WCAG contrast ratio of the RGB as a float value between 1 and 21:
 
     $color1 = new color2css("white");
     $color2 = new color2css("black");
