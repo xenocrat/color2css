@@ -464,8 +464,14 @@
             if (is_nan($hwb["h"]))
                 $hwb["h"] = $this->hwb["h"];
 
+            $hsv = $this->rgb2hsv($this->rgb);
+
+            if (is_nan($hsv["h"]))
+                $hsv["h"] = $this->hsv["h"];
+
             $this->hsl = $hsl;
             $this->hwb = $hwb;
+            $this->hsv = $hsv;
             return true;
         }
 
@@ -490,8 +496,14 @@
             if (is_nan($hwb["h"]))
                 $hwb["h"] = $this->hwb["h"];
 
+            $hsv = $this->rgb2hsv($this->rgb);
+
+            if (is_nan($hsv["h"]))
+                $hsv["h"] = $this->hsv["h"];
+
             $this->hsl = $hsl;
             $this->hwb = $hwb;
+            $this->hsv = $hsv;
             return true;
         }
 
@@ -516,8 +528,14 @@
             if (is_nan($hwb["h"]))
                 $hwb["h"] = $this->hwb["h"];
 
+            $hsv = $this->rgb2hsv($this->rgb);
+
+            if (is_nan($hsv["h"]))
+                $hsv["h"] = $this->hsv["h"];
+
             $this->hsl = $hsl;
             $this->hwb = $hwb;
+            $this->hsv = $hsv;
             return true;
         }
 
@@ -537,9 +555,9 @@
                 $h = $h + 360;
 
             $this->hsl["h"] = (float) $h;
+            $this->hsv["h"] = (float) $h;
+            $this->hwb["h"] = (float) $h;
 
-            $this->hsv = $this->hsl2hsv($this->hsl);
-            $this->hwb = $this->hsv2hwb($this->hsv);
             $this->rgb = $this->hsl2rgb($this->hsl);
             return true;
         }
@@ -1015,6 +1033,55 @@
                 return $m1 + ($m2 - $m1) * (((1 / 3) * 2) - $h) * 6;
 
             return $m1;
+        }
+
+        protected function rgb2hsv($rgb): array {
+            $r = $rgb["r"];
+            $g = $rgb["g"];
+            $b = $rgb["b"];
+
+            $max = max($r, $g, $b);
+            $min = min($r, $g, $b);
+
+            $c = $max - $min;
+            $v = $max;
+
+            if ($c == 0) {
+                $h = NAN;
+                $s = 0;
+            } else {
+                $s = $c / $max;
+
+                $cr = ((($max - $r) / 6) + ($c / 2)) / $c;
+                $cg = ((($max - $g) / 6) + ($c / 2)) / $c;
+                $cb = ((($max - $b) / 6) + ($c / 2)) / $c;
+
+                switch ($max) {
+                    case $r:
+                        $h = $cb - $cg;
+                        break;
+                    case $g:
+                        $h = ((1 / 3) + $cr) - $cb;
+                        break;
+                    case $b:
+                        $h = ((2 / 3) + $cg) - $cr;
+                        break;
+                }
+
+                $h = $h * 360;
+
+                if ($h > 360)
+                    $h = $h % 360;
+
+                while ($h < 0)
+                    $h = $h + 360;
+            }
+
+            return array(
+                "h" => (float) $h,
+                "s" => (float) $this->clamp($s, 0.0, 1.0),
+                "v" => (float) $this->clamp($v, 0.0, 1.0)
+            );
         }
 
         protected function rgb2hsl($rgb): array {
