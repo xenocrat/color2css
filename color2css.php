@@ -2,8 +2,9 @@
     namespace xenocrat;
 
     class color2css {
-        const COLOR2CSS_VERSION_MAJOR        = 6;
-        const COLOR2CSS_VERSION_MINOR        = 1;
+        const VERSION_MAJOR                  = 6;
+        const VERSION_MINOR                  = 2;
+        const VERSION_PATCH                  = 0;
 
         const CSS_COLOR_TRANSPARENT          = "#00000000";
         const CSS_COLOR_BLACK                = "#000000ff";
@@ -292,7 +293,9 @@
         );
         protected $alpha = 0.0;
 
-        public function __construct($color = "transparent") {
+        public function __construct(
+            $color = "transparent"
+        ) {
             $args = func_get_args();
 
             if (count($args) < 2) {
@@ -313,7 +316,8 @@
             $this->alpha((count($args) == 4) ? $args[3] : 1.0);
         }
 
-        public function list_keywords(): array {
+        public function list_keywords(
+        ): array {
             $keywords = array();
 
             $reflect = new \ReflectionClass(get_class($this));
@@ -327,7 +331,9 @@
             return $keywords;
         }
 
-        public function rgb($str = null): string|bool {
+        public function rgb(
+            $str = null
+        ): string|bool {
             if (isset($str))
                 return $this->interpret_rgb($str);
 
@@ -339,7 +345,9 @@
             return "rgb(".$r." ".$g." ".$b." / ".$p."%)";
         }
 
-        public function hsl($str = null): string|bool {
+        public function hsl(
+            $str = null
+        ): string|bool {
             if (isset($str))
                 return $this->interpret_hsl($str);
 
@@ -351,7 +359,9 @@
             return "hsl(".$h." ".$s."% ".$l."% / ".$p."%)";
         }
 
-        public function hwb($str = null): string|bool {
+        public function hwb(
+            $str = null
+        ): string|bool {
             if (isset($str))
                 return $this->interpret_hwb($str);
 
@@ -363,7 +373,9 @@
             return "hwb(".$h." ".$w."% ".$b."% / ".$p."%)";
         }
 
-        public function lab($str = null): string|bool {
+        public function lab(
+            $str = null
+        ): string|bool {
             if (isset($str))
                 return $this->interpret_lab($str);
 
@@ -375,7 +387,9 @@
             return "lab(".$l." ".$a." ".$b." / ".$p."%)";
         }
 
-        public function lch($str = null): string|bool {
+        public function lch(
+            $str = null
+        ): string|bool {
             if (isset($str))
                 return $this->interpret_lch($str);
 
@@ -387,7 +401,9 @@
             return "lch(".$l." ".$c." ".$h." / ".$p."%)";
         }
 
-        public function oklab($str = null): string|bool {
+        public function oklab(
+            $str = null
+        ): string|bool {
             if (isset($str))
                 return $this->interpret_oklab($str);
 
@@ -399,7 +415,9 @@
             return "oklab(".$l." ".$a." ".$b." / ".$p."%)";
         }
 
-        public function oklch($str = null): string|bool {
+        public function oklch(
+            $str = null
+        ): string|bool {
             if (isset($str))
                 return $this->interpret_oklch($str);
 
@@ -411,7 +429,9 @@
             return "oklch(".$l." ".$c." ".$h." / ".$p."%)";
         }
 
-        public function hex($str = null): string|bool {
+        public function hex(
+            $str = null
+        ): string|bool {
             if (isset($str))
                 return $this->interpret_hex($str);
 
@@ -426,7 +446,9 @@
             return "#".$r.$g.$b;
         }
 
-        public function hexa($str = null): string|bool {
+        public function hexa(
+            $str = null
+        ): string|bool {
             if (isset($str))
                 return $this->interpret_hex($str);
 
@@ -443,7 +465,9 @@
             return "#".$r.$g.$b.$p;
         }
 
-        public function red($r = null): float|bool {
+        public function red(
+            $r = null
+        ): float|bool {
             if (!isset($r))
                 return $this->rgb["r"];
 
@@ -475,7 +499,9 @@
             return true;
         }
 
-        public function green($g = null): float|bool {
+        public function green(
+            $g = null
+        ): float|bool {
             if (!isset($g))
                 return $this->rgb["g"];
 
@@ -507,7 +533,9 @@
             return true;
         }
 
-        public function blue($b = null): float|bool {
+        public function blue(
+            $b = null
+        ): float|bool {
             if (!isset($b))
                 return $this->rgb["b"];
 
@@ -539,7 +567,9 @@
             return true;
         }
 
-        public function hue($h = null): float|bool {
+        public function hue(
+            $h = null
+        ): float|bool {
             if (!isset($h))
                 return $this->hsl["h"];
 
@@ -562,7 +592,9 @@
             return true;
         }
 
-        public function saturation($s = null): float|bool {
+        public function saturation(
+            $s = null
+        ): float|bool {
             if (!isset($s))
                 return $this->hsl["s"];
 
@@ -579,7 +611,9 @@
             return true;
         }
 
-        public function lightness($l = null): float|bool {
+        public function lightness(
+            $l = null
+        ): float|bool {
             if (!isset($l))
                 return $this->hsl["l"];
 
@@ -596,7 +630,9 @@
             return true;
         }
 
-        public function whiteness($w = null): float|bool {
+        public function whiteness(
+            $w = null
+        ): float|bool {
             if (!isset($w))
                 return $this->hwb["w"];
 
@@ -613,7 +649,9 @@
             return true;
         }
 
-        public function blackness($d = null): float|bool {
+        public function blackness(
+            $d = null
+        ): float|bool {
             if (!isset($d))
                 return $this->hwb["b"];
 
@@ -630,7 +668,9 @@
             return true;
         }
 
-        public function colorfulness($s = null): float|bool {
+        public function colorfulness(
+            $s = null
+        ): float|bool {
             if (!isset($s))
                 return $this->hsv["s"];
 
@@ -647,7 +687,9 @@
             return true;
         }
 
-        public function brightness($v = null): float|bool {
+        public function brightness(
+            $v = null
+        ): float|bool {
             if (!isset($v))
                 return $this->hsv["v"];
 
@@ -664,7 +706,9 @@
             return true;
         }
 
-        public function cie_l($l = null): float|bool {
+        public function cie_l(
+            $l = null
+        ): float|bool {
             if (!isset($l))
                 return $this->lab["l"];
 
@@ -684,7 +728,9 @@
             return true;
         }
 
-        public function cie_a($a = null): float|bool {
+        public function cie_a(
+            $a = null
+        ): float|bool {
             if (!isset($a))
                 return $this->lab["a"];
 
@@ -704,7 +750,9 @@
             return true;
         }
 
-        public function cie_b($b = null): float|bool {
+        public function cie_b(
+            $b = null
+        ): float|bool {
             if (!isset($b))
                 return $this->lab["b"];
 
@@ -724,7 +772,9 @@
             return true;
         }
 
-        public function cie_c($c = null): float|bool {
+        public function cie_c(
+            $c = null
+        ): float|bool {
             if (!isset($c))
                 return $this->lch["c"];
 
@@ -739,7 +789,9 @@
             return true;
         }
 
-        public function cie_h($h = null): float|bool {
+        public function cie_h(
+            $h = null
+        ): float|bool {
             if (!isset($h))
                 return $this->lch["h"];
 
@@ -760,7 +812,9 @@
             return true;
         }
 
-        public function ok_l($l = null): float|bool {
+        public function ok_l(
+            $l = null
+        ): float|bool {
             if (!isset($l))
                 return $this->oklab["l"];
 
@@ -780,7 +834,9 @@
             return true;
         }
 
-        public function ok_a($a = null): float|bool {
+        public function ok_a(
+            $a = null
+        ): float|bool {
             if (!isset($a))
                 return $this->oklab["a"];
 
@@ -800,7 +856,9 @@
             return true;
         }
 
-        public function ok_b($b = null): float|bool {
+        public function ok_b(
+            $b = null
+        ): float|bool {
             if (!isset($b))
                 return $this->oklab["b"];
 
@@ -820,7 +878,9 @@
             return true;
         }
 
-        public function ok_c($c = null): float|bool {
+        public function ok_c(
+            $c = null
+        ): float|bool {
             if (!isset($c))
                 return $this->oklch["c"];
 
@@ -835,7 +895,9 @@
             return true;
         }
 
-        public function ok_h($h = null): float|bool {
+        public function ok_h(
+            $h = null
+        ): float|bool {
             if (!isset($h))
                 return $this->oklch["h"];
 
@@ -856,7 +918,9 @@
             return true;
         }
 
-        public function alpha($a = null): float|bool {
+        public function alpha(
+            $a = null
+        ): float|bool {
             if (!isset($a))
                 return $this->alpha;
 
@@ -870,7 +934,9 @@
             return true;
         }
 
-        public function keyword($str = null): string|bool {
+        public function keyword(
+            $str = null
+        ): string|bool {
             if (isset($str))
                 return $this->interpret_keyword($str);
 
@@ -894,7 +960,10 @@
             return false;
         }
 
-        public static function contrast($color1, $color2): float {
+        public static function contrast(
+            $color1,
+            $color2
+        ): float {
             if (!$color1 instanceof color2css)
                 throw new \InvalidArgumentException(
                     "Color 1 must be an instance of color2css."
@@ -915,7 +984,9 @@
             return (float) $c;
         }
 
-        public static function luminance($color): float {
+        public static function luminance(
+            $color
+        ): float {
             if (!$color instanceof color2css)
                 throw new \InvalidArgumentException(
                     "Color must be an instance of color2css."
@@ -944,7 +1015,9 @@
             return (float) $l;
         }
 
-        protected function take($color): void {
+        protected function take(
+            $color
+        ): void {
             $this->rgb = array(
                 "r" => $color->red(),
                 "g" => $color->green(),
@@ -988,7 +1061,9 @@
             $this->alpha = $color->alpha();
         }
 
-        protected function deg($str): float {
+        protected function deg(
+            $str
+        ): float {
             if (preg_match("/grad$/i", $str))
                 return (float) $str * 0.9;
 
@@ -1001,7 +1076,11 @@
             return (float) $str;
         }
 
-        protected function clamp($num, $min, $max): int|float {
+        protected function clamp(
+            $num,
+            $min,
+            $max
+        ): int|float {
             if ($num < $min)
                 $num = $min;
 
@@ -1011,12 +1090,19 @@
             return $num;
         }
 
-        protected function number_format($num, $decimals = 1): string {
+        protected function number_format(
+            $num,
+            $decimals = 1
+        ): string {
             $str = number_format($num, $decimals, ".", "");
             return preg_replace("/\.0+$/", "", $str);
         }
 
-        protected function hue2rgb($m1, $m2, $h): float {
+        protected function hue2rgb(
+            $m1,
+            $m2,
+            $h
+        ): float {
             if ($h < 0)
                 $h = $h + 1;
 
@@ -1035,7 +1121,9 @@
             return $m1;
         }
 
-        protected function rgb2hsv($rgb): array {
+        protected function rgb2hsv(
+            $rgb
+        ): array {
             $r = $rgb["r"];
             $g = $rgb["g"];
             $b = $rgb["b"];
@@ -1084,7 +1172,9 @@
             );
         }
 
-        protected function rgb2hsl($rgb): array {
+        protected function rgb2hsl(
+            $rgb
+        ): array {
             $r = $rgb["r"];
             $g = $rgb["g"];
             $b = $rgb["b"];
@@ -1137,7 +1227,9 @@
             );
         }
 
-        protected function hsl2rgb($hsl): array {
+        protected function hsl2rgb(
+            $hsl
+        ): array {
             $h = $hsl["h"] / 360;
             $s = $hsl["s"];
             $l = $hsl["l"];
@@ -1159,7 +1251,9 @@
             );
         }
 
-        protected function hsl2hsv($hsl): array {
+        protected function hsl2hsv(
+            $hsl
+        ): array {
             $h = $hsl["h"];
             $s = $hsl["s"];
             $l = $hsl["l"];
@@ -1177,7 +1271,9 @@
             );
         }
 
-        protected function hsv2hsl($hsv): array {
+        protected function hsv2hsl(
+            $hsv
+        ): array {
             $h = $hsv["h"];
             $s = $hsv["s"];
             $v = $hsv["v"];
@@ -1195,7 +1291,9 @@
             );
         }
 
-        protected function hsv2hwb($hsv): array {
+        protected function hsv2hwb(
+            $hsv
+        ): array {
             $h = $hsv["h"];
             $s = $hsv["s"];
             $v = $hsv["v"];
@@ -1210,7 +1308,9 @@
             );
         }
 
-        protected function hwb2hsv($hwb): array {
+        protected function hwb2hsv(
+            $hwb
+        ): array {
             $h = $hwb["h"];
             $w = $hwb["w"];
             $b = $hwb["b"];
@@ -1225,7 +1325,9 @@
             );
         }
 
-        protected function rgb2hwb($rgb): array {
+        protected function rgb2hwb(
+            $rgb
+        ): array {
             $r = $rgb["r"];
             $g = $rgb["g"];
             $b = $rgb["b"];
@@ -1239,7 +1341,9 @@
             );
         }
 
-        protected function hwb2rgb($hwb): array {
+        protected function hwb2rgb(
+            $hwb
+        ): array {
             $h = $hwb["h"];
             $w = $hwb["w"];
             $d = $hwb["b"];
@@ -1268,7 +1372,9 @@
             );
         }
 
-        protected function lab2lch($lab): array {
+        protected function lab2lch(
+            $lab
+        ): array {
             $l = $lab["l"];
             $a = $lab["a"];
             $b = $lab["b"];
@@ -1292,7 +1398,9 @@
             );
         }
 
-        protected function lch2lab($lch): array {
+        protected function lch2lab(
+            $lch
+        ): array {
             $l = $lch["l"];
             $c = $lch["c"];
             $h = $lch["h"];
@@ -1307,7 +1415,9 @@
             );
         }
 
-        protected function oklab2oklch($oklab): array {
+        protected function oklab2oklch(
+            $oklab
+        ): array {
             $l = $oklab["l"];
             $a = $oklab["a"];
             $b = $oklab["b"];
@@ -1331,7 +1441,9 @@
             );
         }
 
-        protected function oklch2oklab($oklch): array {
+        protected function oklch2oklab(
+            $oklch
+        ): array {
             $l = $oklch["l"];
             $c = $oklch["c"];
             $h = $oklch["h"];
@@ -1346,7 +1458,9 @@
             );
         }
 
-        protected function interpret($color): void {
+        protected function interpret(
+            $color
+        ): void {
             if (!is_string($color))
                 throw new \InvalidArgumentException(
                     "Expected string in call to color constructor."
@@ -1402,7 +1516,9 @@
             );
         }
 
-        protected function interpret_rgb($str): bool {
+        protected function interpret_rgb(
+            $str
+        ): bool {
             if (
                 !preg_match(self::REGEX_RGB, $str, $rgb) and
                 !preg_match(self::REGEX_RGB_LEGACY, $str, $rgb)
@@ -1461,7 +1577,9 @@
             return true; 
         }
 
-        protected function interpret_hsl($str): bool {
+        protected function interpret_hsl(
+            $str
+        ): bool {
             if (
                 !preg_match(self::REGEX_HSL, $str, $hsl) and
                 !preg_match(self::REGEX_HSL_LEGACY, $str, $hsl)
@@ -1511,7 +1629,9 @@
             return true; 
         }
 
-        protected function interpret_hwb($str): bool {
+        protected function interpret_hwb(
+            $str
+        ): bool {
             if (!preg_match(self::REGEX_HWB, $str, $hwb))
                 return false;
 
@@ -1558,7 +1678,9 @@
             return true; 
         }
 
-        protected function interpret_lab($str): bool {
+        protected function interpret_lab(
+            $str
+        ): bool {
             if (!preg_match(self::REGEX_LAB, $str, $lab))
                 return false;
 
@@ -1611,7 +1733,9 @@
             return true; 
         }
 
-        protected function interpret_lch($str): bool {
+        protected function interpret_lch(
+            $str
+        ): bool {
             if (!preg_match(self::REGEX_LCH, $str, $lch))
                 return false;
 
@@ -1661,7 +1785,9 @@
             return true; 
         }
 
-        protected function interpret_oklab($str): bool {
+        protected function interpret_oklab(
+            $str
+        ): bool {
             if (!preg_match(self::REGEX_OKLAB, $str, $lab))
                 return false;
 
@@ -1717,7 +1843,9 @@
             return true; 
         }
 
-        protected function interpret_oklch($str): bool {
+        protected function interpret_oklch(
+            $str
+        ): bool {
             if (!preg_match(self::REGEX_OKLCH, $str, $lch))
                 return false;
 
@@ -1770,7 +1898,9 @@
             return true; 
         }
 
-        protected function interpret_hex($str): bool {
+        protected function interpret_hex(
+            $str
+        ): bool {
             switch (strlen($str)) {
                 case 4:
                 case 5:
@@ -1828,7 +1958,9 @@
             return true;
         }
 
-        protected function interpret_keyword($str): bool {
+        protected function interpret_keyword(
+            $str
+        ): bool {
             $const = 'self::CSS_COLOR_'.strtoupper($str);
 
             if (defined($const))
